@@ -68,9 +68,10 @@ def get_forecast(city):
 @app.route('/api/login', methods=['POST'])
 def login():
     data = request.get_json()
-    # Verificação simples (em produção usar bcrypt e banco de dados)
     if data.get('username') == 'a' and data.get('password') == '1':
         return jsonify({'token': 'fake-jwt-token', 'user': {'username': 'admin'}})
+    if data.get('username') == 'guest':
+        return jsonify({'token': 'guest-token', 'user': {'username': 'guest'}})
     return jsonify({'error': 'Credenciais inválidas'}), 401
 
 # WebSocket

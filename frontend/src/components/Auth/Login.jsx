@@ -71,8 +71,7 @@ const Login = () => {
         <button type="submit" className="login-button" disabled={loading}>
           {loading ? 'Entrando...' : 'Entrar'}
         </button>
-      </form>
-      <button 
+        <button 
         onClick={handleGuestLogin} 
         className="guest-button"
         disabled={loading}
@@ -80,6 +79,8 @@ const Login = () => {
       >
         Entrar como convidado
       </button>
+      </form>
+      
     </div>
   );
 };
