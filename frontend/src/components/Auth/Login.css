@@ -79,3 +79,37 @@
   margin-bottom: 1rem;
   text-align: center;
 }
+
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 100vh;
+  background: lightgray;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  opacity: 0.5;
+  transition: opacity 0.3s;
+}
+
+.loading-overlay.fade-in {
+  opacity: 1;
+  transition: opacity 0.3s;
+}
+
+.loading-overlay.fade-out {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s;
+}
+
+.loading-logo {
+  width: 350px;
+  max-width: 80vw;
+  max-height: 80vh;
+}
