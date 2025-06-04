@@ -1,12 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import WeatherCards from '../WeatherCards/WeatherCards';
 import Suggestions from '../Suggestions/Suggestions';
 import { TemperatureChart, HumidityChart } from '../Charts';
 import HistoryTable from '../History/HistoryTable';
-import logo from '../Auth/logo.png';
+import logo from '../images/agrigest_logo-noBG-text.png';
 import '../Auth/Login.css';
 import './Dashboard.css';
+import defaultUserIcon from '../images/default-user-icon.png';
+import { WeatherContext } from '../../context/WeatherContext';
 
 const FADE_DURATION = 500; // ms
 
@@ -16,6 +18,79 @@ const Dashboard = () => {
     location.state && location.state.showOverlay
   );
   const [fadeOut, setFadeOut] = useState(false);
+
+  // User info from localStorage
+  const username = localStorage.getItem('username') || 'Utilizador';
+  const gender = localStorage.getItem('gender') || 'male';
+  const randomNum = localStorage.getItem('userImgNum') || 1;
+  let userImg;
+  if (username === 'guest') {
+    userImg = defaultUserIcon;
+  } else {
+    userImg = `https://randomuser.me/api/portraits/${gender === 'male' ? 'men' : 'women'}/${randomNum}.jpg`;
+  }
+
+  // Filters state
+  const [country, setCountry] = useState('portugal');
+  const [city, setCity] = useState('');
+  const [crop, setCrop] = useState('vine');
+  const [date, setDate] = useState('');
+
+  // Get updateLocation from WeatherContext
+  const { updateLocation } = useContext(WeatherContext);
+  const debounceTimeout = useRef(null);
+
+  // Try to get user's city on mount
+  useEffect(() => {
+    if (!city && navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(async (position) => {
+        const { latitude, longitude } = position.coords;
+        try {
+          const response = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
+          );
+          const data = await response.json();
+          if (data.address && data.address.city) {
+            setCity(data.address.city);
+          } else if (data.address && data.address.town) {
+            setCity(data.address.town);
+          } else if (data.address && data.address.village) {
+            setCity(data.address.village);
+          }
+        } catch (err) {
+          // If geolocation or fetch fails, do nothing (city stays empty)
+        }
+      });
+    }
+  }, [city]);
+
+  // Debounced update for city input
+  useEffect(() => {
+    if (!city) return;
+    if (debounceTimeout.current) clearTimeout(debounceTimeout.current);
+
+    debounceTimeout.current = setTimeout(() => {
+      updateLocation({ city });
+    }, 600); // 600ms after user stops typing
+
+    return () => clearTimeout(debounceTimeout.current);
+  }, [city, updateLocation]);
+
+  const handleCountryChange = (e) => {
+    setCountry(e.target.value);
+  };
+
+  const handleCityChange = (e) => {
+    setCity(e.target.value);
+  };
+
+  const handleCropChange = (e) => {
+    setCrop(e.target.value);
+  };
+
+  const handleDateChange = (e) => {
+    setDate(e.target.value);
+  };
 
   useEffect(() => {
     if (showOverlay) {
@@ -40,7 +115,7 @@ const Dashboard = () => {
         <div className="sidebar">
           <div className="logo">
             <i className="fas fa-leaf"></i>
-            <h2>AgroSmart</h2>
+            <h2>Agrigest</h2>
           </div>
           <div className="nav-menu">
             <div className="nav-item active">
@@ -71,8 +146,8 @@ const Dashboard = () => {
           <div className="header">
             <h1>Gestão Agrícola Inteligente</h1>
             <div className="user-info">
-              <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="User" />
-              <span>Maria Silva</span>
+              <img src={userImg} alt="User" />
+              <span>{username}</span>
             </div>
           </div>
 
@@ -80,7 +155,7 @@ const Dashboard = () => {
           <div className="filters">
             <div className="filter-group">
               <label htmlFor="country">País</label>
-              <select id="country">
+              <select id="country" value={country} onChange={handleCountryChange}>
                 <option value="portugal">Portugal</option>
                 <option value="brazil">Brasil</option>
                 <option value="spain">Espanha</option>
@@ -89,16 +164,17 @@ const Dashboard = () => {
             </div>
             <div className="filter-group">
               <label htmlFor="city">Cidade</label>
-              <select id="city">
-                <option value="lisbon">Lisboa</option>
-                <option value="porto">Porto</option>
-                <option value="coimbra">Coimbra</option>
-                <option value="faro">Faro</option>
-              </select>
+              <input
+                id="city"
+                type="text"
+                value={city}
+                onChange={handleCityChange}
+                placeholder="Digite a cidade"
+              />
             </div>
             <div className="filter-group">
               <label htmlFor="crop">Cultura</label>
-              <select id="crop">
+              <select id="crop" value={crop} onChange={handleCropChange}>
                 <option value="vine">Videira</option>
                 <option value="olive">Oliveira</option>
                 <option value="corn">Milho</option>
@@ -107,7 +183,10 @@ const Dashboard = () => {
             </div>
             <div className="filter-group">
               <label htmlFor="date">Data</label>
-              <input type="date" id="date" />
+              <input type="date" id="date" value={date} onChange={handleDateChange} />
+            </div>
+            <div style={{ margin: '1em 0', color: '#0077cc', fontWeight: 'bold' }}>
+              Cidade digitada: {city}
             </div>
           </div>
 
@@ -121,7 +200,7 @@ const Dashboard = () => {
           <div className="charts">
             <div className="chart-container">
               <div className="chart-title">Temperatura (Últimos 7 dias)</div>
-              <TemperatureChart />
+              <TemperatureChart city={city} />
             </div>
             <div className="chart-container">
               <div className="chart-title">Humidade do Solo (Últimos 7 dias)</div>

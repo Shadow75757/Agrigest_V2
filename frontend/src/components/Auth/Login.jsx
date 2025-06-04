@@ -1,8 +1,8 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { WeatherContext } from '../../context/WeatherContext';
 import './Login.css';
-import logo from './logo.png';
+import logo from '../images/agrigest_logo-noBG-text.png';
 
 const FADE_DURATION = 500; // ms
 
@@ -13,9 +13,25 @@ const Login = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // Overlay states
+  // Splash overlay states
+  const [showSplash, setShowSplash] = useState(true);
+  const [splashFadeIn, setSplashFadeIn] = useState(false);
+  const [splashFadeOut, setSplashFadeOut] = useState(false);
+
+  // Login overlay states
   const [showOverlay, setShowOverlay] = useState(false);
   const [fadeIn, setFadeIn] = useState(false);
+
+  // Splash screen effect on mount
+  useEffect(() => {
+    setSplashFadeIn(true);
+    const fadeOutTimer = setTimeout(() => setSplashFadeOut(true), 1000);
+    const hideTimer = setTimeout(() => setShowSplash(false), 1000 + FADE_DURATION);
+    return () => {
+      clearTimeout(fadeOutTimer);
+      clearTimeout(hideTimer);
+    };
+  }, []);
 
   // Show overlay on login/guest login
   const showLoadingOverlayAndNavigate = (to) => {
@@ -36,6 +52,11 @@ const Login = () => {
       setError('Credenciais inválidas');
     } else {
       setError('');
+      const gender = credentials.username.toLowerCase().endsWith('a') ? 'female' : 'male';
+      const randomNum = Math.floor(Math.random() * 99) + 1;
+      localStorage.setItem('username', credentials.username);
+      localStorage.setItem('gender', gender);
+      localStorage.setItem('userImgNum', randomNum);
       showLoadingOverlayAndNavigate('/dashboard');
     }
   };
@@ -48,6 +69,9 @@ const Login = () => {
       setError('Não foi possível logar como convidado');
     } else {
       setError('');
+      localStorage.setItem('username', 'guest');
+      localStorage.setItem('gender', 'none');
+      localStorage.setItem('userImgNum', 'guest');
       showLoadingOverlayAndNavigate('/dashboard');
     }
   };
@@ -59,17 +83,25 @@ const Login = () => {
 
   return (
     <>
+      {/* Splash overlay on initial load */}
+      {showSplash && (
+        <div className={`loading-overlay${splashFadeIn ? ' fade-in' : ''}${splashFadeOut ? ' fade-out' : ''}`}>
+          <img src={logo} alt="Logo" className="loading-logo" />
+        </div>
+      )}
+      {/* Login overlay on login */}
       {showOverlay && (
         <div className={`loading-overlay${fadeIn ? ' fade-in' : ''}`}>
           <img src={logo} alt="Logo" className="loading-logo" />
         </div>
       )}
-      <div className="login-container">
+      {/* Login form always rendered */}
+      <div className={`login-container${showSplash ? ' splash-active' : ''}`}>
         <form onSubmit={handleSubmit} className="login-form">
           <h2>Login</h2>
           {error && <div className="error-message">{error}</div>}
           <div className="form-group">
-            <label htmlFor="username">Usuário</label>
+            <label htmlFor="username">Utilizador:</label>
             <input
               id="username"
               type="text"
@@ -79,7 +111,7 @@ const Login = () => {
             />
           </div>
           <div className="form-group">
-            <label htmlFor="password">Senha</label>
+            <label htmlFor="password">Password:</label>
             <input
               id="password"
               type="password"
@@ -97,7 +129,7 @@ const Login = () => {
             disabled={loading}
             style={{ marginTop: '10px' }}
           >
-            Entrar como convidado
+            Entrar como guest
           </button>
         </form>
       </div>

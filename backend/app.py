@@ -65,9 +65,17 @@ class OpenWeatherMapStrategy(WeatherStrategy):
 
 @app.route('/api/weather/<city>', methods=['GET'])
 def get_weather(city):
-    weather_facade = WeatherServiceFacade()
-    data = weather_facade.get_weather_data(city)
-    return jsonify(data)
+    try:
+        weather_facade = WeatherServiceFacade()
+        data = weather_facade.get_weather_data(city)
+        if not isinstance(data, dict):
+            return jsonify({'error': 'Failed to fetch weather data'}), 500
+        if 'error' in data:
+            return jsonify(data), 400
+        return jsonify(data)
+    except Exception as e:
+        print("Exception in /api/weather/<city>:", e)
+        return jsonify({'error': 'Internal server error'}), 500
 
 
 @app.route('/api/forecast/<city>', methods=['GET'])
@@ -77,11 +85,38 @@ def get_forecast(city):
     return jsonify(data)
 
 
+@app.route('/api/weather/temperature')
+def api_weather_temperature():
+    city = request.args.get('city')
+    print("API received city:", city)  # Debug print
+    weather_facade = WeatherServiceFacade()
+    forecast = weather_facade.get_forecast(city)
+    temps = []
+    labels = []
+    if "list" in forecast:
+        for i in range(0, min(40, len(forecast["list"])), 8):
+            entry = forecast["list"][i]
+            temps.append(entry["main"]["temp"])
+            labels.append(entry["dt_txt"].split()[0])
+    return jsonify({"temps": temps, "labels": labels})
+
+
+USERS = {
+    'a': {'password': '1', 'username': 'admin'},
+    'luis': {'password': '123', 'username': 'luis'},
+    'prata': {'password': '123', 'username': 'prata'},
+    'sergio': {'password': '123', 'username': 'sergio'},
+    'maria': {'password': '1', 'username': 'maria'},
+    'joana': {'password': 'abc', 'username': 'joana'},
+}
+
+
 @app.route('/api/login', methods=['POST'])
 def login():
     data = request.get_json()
-    if data.get('username') == 'a' and data.get('password') == '1':
-        return jsonify({'token': 'fake-jwt-token', 'user': {'username': 'admin'}})
+    user = USERS.get(data.get('username'))
+    if user and user['password'] == data.get('password'):
+        return jsonify({'token': 'fake-jwt-token', 'user': {'username': user['username']}})
     if data.get('username') == 'guest':
         return jsonify({'token': 'guest-token', 'user': {'username': 'guest'}})
     return jsonify({'error': 'Credenciais inválidas'}), 401

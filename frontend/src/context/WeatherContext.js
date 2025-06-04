@@ -18,16 +18,16 @@ export const WeatherProvider = ({ children }) => {
   });
 
   useEffect(() => {
-    // Conectar ao WebSocket
-    const newSocket = io('http://localhost:5000');
-    setSocket(newSocket);
+    // // Conectar ao WebSocket
+    // const newSocket = io('http://localhost:5000');
+    // setSocket(newSocket);
 
-    newSocket.on('weather_update', (data) => {
-      setWeather(data);
-      saveToLocalStorage('weather', data);
-    });
+    // newSocket.on('weather_update', (data) => {
+    //   setWeather(data);
+    //   saveToLocalStorage('weather', data);
+    // });
 
-    return () => newSocket.close();
+    // return () => newSocket.close();
   }, []);
 
   useEffect(() => {
@@ -57,7 +57,7 @@ export const WeatherProvider = ({ children }) => {
     };
 
     loadData();
-  }, [location, socket]);
+  }, [location.city]);
 
   const generateSuggestions = (crop, weatherData) => {
     // Lógica de sugestões movida para o frontend
