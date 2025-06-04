@@ -496,3 +496,45 @@ body {
     justify-content: flex-end;
   }
 }
+
+/* City Suggestions Dropdown */
+.city-suggestions {
+  position: absolute;
+  width: 100%;
+  max-width: 350px;
+  /* or match your input width */
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  margin-top: 2px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  z-index: 10;
+  list-style: none;
+  padding: 0;
+  transition: box-shadow 0.2s;
+  max-height: 150px;
+  /* About 3 items */
+  overflow-y: auto;
+}
+
+.filter-group {
+  position: relative;
+}
+
+.city-suggestions li {
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 1rem;
+}
+
+.city-suggestions li:last-child {
+  border-bottom: none;
+}
+
+.city-suggestions li:hover,
+.city-suggestions li:focus {
+  background: #e3f2fd;
+  color: #1976d2;
+}

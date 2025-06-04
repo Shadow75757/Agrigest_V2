@@ -9,6 +9,7 @@ import '../Auth/Login.css';
 import './Dashboard.css';
 import defaultUserIcon from '../images/default-user-icon.png';
 import { WeatherContext } from '../../context/WeatherContext';
+import axios from 'axios';
 
 const FADE_DURATION = 500; // ms
 
@@ -31,14 +32,37 @@ const Dashboard = () => {
   }
 
   // Filters state
-  const [country, setCountry] = useState('portugal');
+  const [country, setCountry] = useState('Portugal');
+  const [countryCode, setCountryCode] = useState('PT');
+  const [countries, setCountries] = useState([]);
   const [city, setCity] = useState('');
+  const [citySuggestions, setCitySuggestions] = useState([]);
   const [crop, setCrop] = useState('vine');
   const [date, setDate] = useState('');
 
   // Get updateLocation from WeatherContext
   const { updateLocation } = useContext(WeatherContext);
-  const debounceTimeout = useRef(null);
+  const suggestionDebounce = useRef(null);
+  const weatherUpdateRef = useRef(null);
+
+  // Fetch countries on mount
+  useEffect(() => {
+    const fetchCountries = async () => {
+      try {
+        const response = await axios.get('https://restcountries.com/v3.1/all');
+        const sortedCountries = response.data
+          .map(c => ({
+            name: c.translations?.por?.common || c.name.common,
+            code: c.cca2
+          }))
+          .sort((a, b) => a.name.localeCompare(b.name));
+        setCountries(sortedCountries);
+      } catch (error) {
+        console.error('Erro ao buscar países:', error);
+      }
+    };
+    fetchCountries();
+  }, []);
 
   // Try to get user's city on mount
   useEffect(() => {
@@ -52,36 +76,74 @@ const Dashboard = () => {
           const data = await response.json();
           if (data.address && data.address.city) {
             setCity(data.address.city);
+            updateLocation({ city: data.address.city });
           } else if (data.address && data.address.town) {
             setCity(data.address.town);
+            updateLocation({ city: data.address.town });
           } else if (data.address && data.address.village) {
             setCity(data.address.village);
+            updateLocation({ city: data.address.village });
           }
         } catch (err) {
           // If geolocation or fetch fails, do nothing (city stays empty)
         }
       });
     }
+    // eslint-disable-next-line
+  }, []);
+
+  // Weather API call on every city change (no debounce)
+  useEffect(() => {
+    if (city) {
+      updateLocation({ city });
+    }
+    // eslint-disable-next-line
   }, [city]);
 
-  // Debounced update for city input
-  useEffect(() => {
-    if (!city) return;
-    if (debounceTimeout.current) clearTimeout(debounceTimeout.current);
+  // Debounce city suggestions API call
+  const handleCityChange = (e) => {
+    const input = e.target.value;
+    setCity(input);
 
-    debounceTimeout.current = setTimeout(() => {
-      updateLocation({ city });
-    }, 600); // 600ms after user stops typing
-
-    return () => clearTimeout(debounceTimeout.current);
-  }, [city, updateLocation]);
-
-  const handleCountryChange = (e) => {
-    setCountry(e.target.value);
+    if (suggestionDebounce.current) clearTimeout(suggestionDebounce.current);
+    if (!input || input.length < 2) {
+      setCitySuggestions([]);
+      return;
+    }
+    suggestionDebounce.current = setTimeout(() => {
+      fetchCitySuggestions(input);
+    }, 600); // 600ms debounce for suggestions only
   };
 
-  const handleCityChange = (e) => {
-    setCity(e.target.value);
+  const fetchCitySuggestions = async (input) => {
+    try {
+      const response = await axios.get(`https://wft-geo-db.p.rapidapi.com/v1/geo/cities`, {
+        params: {
+          countryIds: countryCode,
+          namePrefix: input,
+          limit: 5,
+          sort: '-population'
+        },
+        headers: {
+          'X-RapidAPI-Key': '0b494e92f4msh996ce1b2f132302p1e9f07jsn49afc1e214b7',
+          'X-RapidAPI-Host': 'wft-geo-db.p.rapidapi.com'
+        }
+      });
+      const cities = response.data.data.map(c => c.name);
+      setCitySuggestions(cities);
+    } catch (error) {
+      setCitySuggestions([]);
+      // Optionally, handle error
+      // console.error('Erro ao buscar cidades:', error);
+    }
+  };
+
+  const handleCountryChange = (e) => {
+    const selected = countries.find(c => c.name === e.target.value);
+    setCountry(selected.name);
+    setCountryCode(selected.code);
+    setCity(''); // limpar cidade ao mudar país
+    setCitySuggestions([]); // limpar sugestões
   };
 
   const handleCropChange = (e) => {
@@ -90,6 +152,12 @@ const Dashboard = () => {
 
   const handleDateChange = (e) => {
     setDate(e.target.value);
+  };
+
+  // When user clicks a suggestion, set city and clear suggestions
+  const handleSuggestionClick = (suggestion) => {
+    setCity(suggestion);
+    setCitySuggestions([]);
   };
 
   useEffect(() => {
@@ -156,10 +224,9 @@ const Dashboard = () => {
             <div className="filter-group">
               <label htmlFor="country">País</label>
               <select id="country" value={country} onChange={handleCountryChange}>
-                <option value="portugal">Portugal</option>
-                <option value="brazil">Brasil</option>
-                <option value="spain">Espanha</option>
-                <option value="france">França</option>
+                {countries.map((c) => (
+                  <option key={c.code} value={c.name}>{c.name}</option>
+                ))}
               </select>
             </div>
             <div className="filter-group">
@@ -171,6 +238,15 @@ const Dashboard = () => {
                 onChange={handleCityChange}
                 placeholder="Digite a cidade"
               />
+              {citySuggestions.length > 0 && (
+                <ul className="city-suggestions">
+                  {citySuggestions.slice(0, 3).map((suggestion, index) => (
+                    <li key={index} onClick={() => handleSuggestionClick(suggestion)}>
+                      {suggestion}
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
             <div className="filter-group">
               <label htmlFor="crop">Cultura</label>
@@ -184,9 +260,6 @@ const Dashboard = () => {
             <div className="filter-group">
               <label htmlFor="date">Data</label>
               <input type="date" id="date" value={date} onChange={handleDateChange} />
-            </div>
-            <div style={{ margin: '1em 0', color: '#0077cc', fontWeight: 'bold' }}>
-              Cidade digitada: {city}
             </div>
           </div>
 
