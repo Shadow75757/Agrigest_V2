@@ -17,7 +17,7 @@ def test_weather_facade(client, mocker):
     mocker.patch('openweathermap_api.get_current_weather', return_value=mock_data)
     
     facade = WeatherServiceFacade()
-    result = facade.get_weather_data('lisbon')
+    result = facade.get_weather_data('Porto')
     assert result == mock_data
 
 def test_login_success(client):

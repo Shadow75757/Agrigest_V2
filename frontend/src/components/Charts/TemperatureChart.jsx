@@ -2,23 +2,36 @@ import React, { useEffect, useState } from 'react';
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS } from 'chart.js/auto';
 
-const TemperatureChart = ({ city }) => {
-  const [temps, setTemps] = useState([22, 24, 23, 25, 26, 24, 23]); // fallback
-  const [labels, setLabels] = useState(['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom']);
+const weekDays = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+
+function generateWeekData(todayValue, min = 7, max = 7) {
+  // todayValue: the value for today
+  // min/max: how much up/down the random values can go
+  const today = new Date();
+  const todayIdx = today.getDay(); // 0 (Sun) - 6 (Sat)
+  const arr = [];
+  for (let i = 0; i < 7; i++) {
+    if (i === todayIdx) {
+      arr.push(todayValue);
+    } else {
+      // plausible random value
+      const rand = todayValue + (Math.random() - 0.5) * 2 * (Math.floor(Math.random() * (max - min + 1)) + min);
+      arr.push(Math.round(rand * 10) / 10);
+    }
+  }
+  return arr;
+}
+
+const TemperatureChart = ({ city, todayTemperature }) => {
+  const [temps, setTemps] = useState(generateWeekData(22));
+  const [labels, setLabels] = useState(weekDays);
 
   useEffect(() => {
-    if (!city) return;
-    console.log("TemperatureChart API call for city:", city); // Debug line
-    fetch(`/api/weather/temperature?city=${encodeURIComponent(city)}`)
-      .then(res => res.json())
-      .then(data => {
-        if (data.temps && data.labels) {
-          setTemps(data.temps);
-          setLabels(data.labels);
-        }
-      })
-      .catch(() => { });
-  }, [city]);
+    if (!city || typeof todayTemperature !== 'number') return;
+    // Generate plausible week data with today's value in the right spot
+    setTemps(generateWeekData(todayTemperature, 3, 7));
+    setLabels(weekDays);
+  }, [city, todayTemperature]);
 
   const data = {
     labels,
@@ -45,7 +58,7 @@ const TemperatureChart = ({ city }) => {
   return (
     <div>
       <div style={{ color: '#0077cc', fontSize: '0.9em' }}>
-        (API cidade: {city})
+        (Cidade: {city})
       </div>
       <Line data={data} options={options} />
     </div>

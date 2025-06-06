@@ -6,30 +6,31 @@ const Filters = () => {
   const { location, updateLocation } = useContext(WeatherContext);
 
   const handleChange = (e) => {
-    updateLocation({ [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    updateLocation({ [name]: value });
   };
 
   return (
     <div className="filters">
       <div className="filter-group">
         <label htmlFor="country">País</label>
-        <select 
-          id="country" 
+        <select
+          id="country"
           name="country"
           value={location.country}
           onChange={handleChange}
         >
-          <option value="portugal">Portugal</option>
+          <option value="portugal" selected>Portugal</option>
           <option value="brazil">Brasil</option>
           <option value="spain">Espanha</option>
           <option value="france">França</option>
         </select>
       </div>
-      
+
       <div className="filter-group">
         <label htmlFor="city">Cidade</label>
-        <select 
-          id="city" 
+        <select
+          id="city"
           name="city"
           value={location.city}
           onChange={handleChange}
@@ -40,11 +41,11 @@ const Filters = () => {
           <option value="faro">Faro</option>
         </select>
       </div>
-      
+
       <div className="filter-group">
-        <label htmlFor="crop">Cultura</label>
-        <select 
-          id="crop" 
+        <label htmlFor="crop">Cultivo</label>
+        <select
+          id="crop"
           name="crop"
           value={location.crop}
           onChange={handleChange}
@@ -55,7 +56,7 @@ const Filters = () => {
           <option value="tomato">Tomate</option>
         </select>
       </div>
-      
+
       <div className="filter-group">
         <label htmlFor="date">Data</label>
         <input type="date" id="date" />

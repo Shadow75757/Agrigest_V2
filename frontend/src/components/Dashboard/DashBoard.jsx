@@ -10,15 +10,83 @@ import './Dashboard.css';
 import defaultUserIcon from '../images/default-user-icon.png';
 import { WeatherContext } from '../../context/WeatherContext';
 import axios from 'axios';
+import Modal from 'react-modal';
 
 const FADE_DURATION = 500; // ms
 
+// Lista de cultivos ordenada alfabeticamente pelo label
+const cropOptions = [
+  { value: "vine", label: "Videira" },
+  { value: "olive", label: "Oliveira" },
+  { value: "corn", label: "Milho" },
+  { value: "tomato", label: "Tomate" },
+  { value: "rice", label: "Arroz" },
+  { value: "wheat", label: "Trigo" },
+  { value: "potato", label: "Batata" },
+  { value: "lettuce", label: "Alface" },
+  { value: "carrot", label: "Cenoura" },
+  { value: "onion", label: "Cebola" },
+  { value: "cabbage", label: "Couve" },
+  { value: "strawberry", label: "Morango" },
+  { value: "melon", label: "Melão" },
+  { value: "watermelon", label: "Melancia" },
+  { value: "beans", label: "Feijão" },
+  { value: "soy", label: "Soja" },
+  { value: "sunflower", label: "Girassol" },
+  { value: "peanut", label: "Amendoim" },
+  { value: "garlic", label: "Alho" },
+  { value: "pepper", label: "Pimentão" },
+  { value: "eggplant", label: "Berinjela" },
+  { value: "spinach", label: "Espinafre" },
+  { value: "broccoli", label: "Brócolis" },
+  { value: "pumpkin", label: "Abóbora" },
+  { value: "cucumber", label: "Pepino" },
+  { value: "peas", label: "Ervilha" },
+  { value: "chickpea", label: "Grão-de-bico" },
+  { value: "barley", label: "Cevada" },
+  { value: "oat", label: "Aveia" },
+  { value: "sorghum", label: "Sorgo" },
+  { value: "cassava", label: "Mandioca" },
+  { value: "sweetpotato", label: "Batata-doce" },
+  { value: "yam", label: "Inhame" },
+  { value: "apple", label: "Maçã" },
+  { value: "pear", label: "Pêra" },
+  { value: "peach", label: "Pêssego" },
+  { value: "plum", label: "Ameixa" },
+  { value: "orange", label: "Laranja" },
+  { value: "lemon", label: "Limão" },
+  { value: "banana", label: "Banana" },
+  { value: "pineapple", label: "Abacaxi" },
+  { value: "grape", label: "Uva" },
+  { value: "mango", label: "Manga" },
+  { value: "papaya", label: "Mamão" },
+  { value: "avocado", label: "Abacate" }
+].sort((a, b) => a.label.localeCompare(b.label));
+
 const Dashboard = () => {
-  const location = useLocation();
+  const routerLocation = useLocation();
+  const { location, updateLocation, weather } = useContext(WeatherContext);
   const [showOverlay, setShowOverlay] = useState(
-    location.state && location.state.showOverlay
+    routerLocation.state && routerLocation.state.showOverlay
   );
   const [fadeOut, setFadeOut] = useState(false);
+
+  // Dark mode & settings dropdown
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [darkMode, setDarkMode] = useState(() => {
+    return localStorage.getItem('darkMode') === 'true';
+  });
+
+  useEffect(() => {
+    if (darkMode) {
+      document.body.classList.add('dark-mode');
+    } else {
+      document.body.classList.remove('dark-mode');
+    }
+    localStorage.setItem('darkMode', darkMode);
+  }, [darkMode]);
+
+  const toggleDarkMode = () => setDarkMode((prev) => !prev);
 
   // User info from localStorage
   const username = localStorage.getItem('username') || 'Utilizador';
@@ -31,21 +99,11 @@ const Dashboard = () => {
     userImg = `https://randomuser.me/api/portraits/${gender === 'male' ? 'men' : 'women'}/${randomNum}.jpg`;
   }
 
-  // Filters state
-  const [country, setCountry] = useState('Portugal');
-  const [countryCode, setCountryCode] = useState('PT');
+  // Países e sugestões de cidades
   const [countries, setCountries] = useState([]);
-  const [city, setCity] = useState('');
   const [citySuggestions, setCitySuggestions] = useState([]);
-  const [crop, setCrop] = useState('vine');
-  const [date, setDate] = useState('');
-
-  // Get updateLocation from WeatherContext
-  const { updateLocation } = useContext(WeatherContext);
   const suggestionDebounce = useRef(null);
-  const weatherUpdateRef = useRef(null);
 
-  // Fetch countries on mount
   useEffect(() => {
     const fetchCountries = async () => {
       try {
@@ -64,9 +122,8 @@ const Dashboard = () => {
     fetchCountries();
   }, []);
 
-  // Try to get user's city on mount
   useEffect(() => {
-    if (!city && navigator.geolocation) {
+    if (!location.city && navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(async (position) => {
         const { latitude, longitude } = position.coords;
         try {
@@ -75,35 +132,24 @@ const Dashboard = () => {
           );
           const data = await response.json();
           if (data.address && data.address.city) {
-            setCity(data.address.city);
             updateLocation({ city: data.address.city });
           } else if (data.address && data.address.town) {
-            setCity(data.address.town);
             updateLocation({ city: data.address.town });
           } else if (data.address && data.address.village) {
-            setCity(data.address.village);
             updateLocation({ city: data.address.village });
           }
         } catch (err) {
-          // If geolocation or fetch fails, do nothing (city stays empty)
+          // Se falhar, não faz nada
         }
       });
     }
     // eslint-disable-next-line
   }, []);
 
-  // Weather API call on every city change (no debounce)
-  useEffect(() => {
-    if (city) {
-      updateLocation({ city });
-    }
-    // eslint-disable-next-line
-  }, [city]);
-
-  // Debounce city suggestions API call
+  // Debounce para sugestões de cidades
   const handleCityChange = (e) => {
     const input = e.target.value;
-    setCity(input);
+    updateLocation({ city: input });
 
     if (suggestionDebounce.current) clearTimeout(suggestionDebounce.current);
     if (!input || input.length < 2) {
@@ -112,14 +158,14 @@ const Dashboard = () => {
     }
     suggestionDebounce.current = setTimeout(() => {
       fetchCitySuggestions(input);
-    }, 600); // 600ms debounce for suggestions only
+    }, 600);
   };
 
   const fetchCitySuggestions = async (input) => {
     try {
       const response = await axios.get(`https://wft-geo-db.p.rapidapi.com/v1/geo/cities`, {
         params: {
-          countryIds: countryCode,
+          countryIds: countries.find(c => c.name === location.country)?.code || 'PT',
           namePrefix: input,
           limit: 5,
           sort: '-population'
@@ -133,36 +179,34 @@ const Dashboard = () => {
       setCitySuggestions(cities);
     } catch (error) {
       setCitySuggestions([]);
-      // Optionally, handle error
-      // console.error('Erro ao buscar cidades:', error);
     }
   };
 
   const handleCountryChange = (e) => {
     const selected = countries.find(c => c.name === e.target.value);
-    setCountry(selected.name);
-    setCountryCode(selected.code);
-    setCity(''); // limpar cidade ao mudar país
-    setCitySuggestions([]); // limpar sugestões
+    updateLocation({
+      country: selected ? selected.name : e.target.value,
+      city: ''
+    });
+    setCitySuggestions([]);
   };
 
   const handleCropChange = (e) => {
-    setCrop(e.target.value);
+    updateLocation({ crop: e.target.value });
   };
 
   const handleDateChange = (e) => {
-    setDate(e.target.value);
+    updateLocation({ date: e.target.value });
   };
 
-  // When user clicks a suggestion, set city and clear suggestions
   const handleSuggestionClick = (suggestion) => {
-    setCity(suggestion);
+    updateLocation({ city: suggestion });
     setCitySuggestions([]);
   };
 
   useEffect(() => {
     if (showOverlay) {
-      const timer = setTimeout(() => setFadeOut(true), 500); // Wait before fade out
+      const timer = setTimeout(() => setFadeOut(true), 500);
       const removeTimer = setTimeout(() => setShowOverlay(false), 500 + FADE_DURATION);
       return () => {
         clearTimeout(timer);
@@ -202,9 +246,27 @@ const Dashboard = () => {
               <i className="fas fa-history"></i>
               <span>Histórico</span>
             </div>
-            <div className="nav-item">
+            <div
+              className="nav-item"
+              onClick={() => setSettingsOpen((v) => !v)}
+              style={{ cursor: 'pointer', position: 'relative' }}
+            >
               <i className="fas fa-cog"></i>
               <span>Configurações</span>
+              <span
+                className={`arrow-icon${settingsOpen ? ' open' : ''}`}
+                style={{ marginLeft: 8 }}
+              >
+                ▼
+              </span>
+              <div className={`settings-dropdown${settingsOpen ? ' open' : ''}`}>
+                <div
+                  className="settings-option"
+                  onClick={toggleDarkMode}
+                >
+                  {darkMode ? 'Desativar Dark Mode' : 'Ativar Dark Mode'}
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -223,7 +285,11 @@ const Dashboard = () => {
           <div className="filters">
             <div className="filter-group">
               <label htmlFor="country">País</label>
-              <select id="country" value={country} onChange={handleCountryChange}>
+              <select
+                id="country"
+                value={location.country}
+                onChange={handleCountryChange}
+              >
                 {countries.map((c) => (
                   <option key={c.code} value={c.name}>{c.name}</option>
                 ))}
@@ -234,7 +300,7 @@ const Dashboard = () => {
               <input
                 id="city"
                 type="text"
-                value={city}
+                value={location.city}
                 onChange={handleCityChange}
                 placeholder="Digite a cidade"
               />
@@ -249,17 +315,25 @@ const Dashboard = () => {
               )}
             </div>
             <div className="filter-group">
-              <label htmlFor="crop">Cultura</label>
-              <select id="crop" value={crop} onChange={handleCropChange}>
-                <option value="vine">Videira</option>
-                <option value="olive">Oliveira</option>
-                <option value="corn">Milho</option>
-                <option value="tomato">Tomate</option>
+              <label htmlFor="crop">Cultivo</label>
+              <select
+                id="crop"
+                value={location.crop}
+                onChange={handleCropChange}
+              >
+                {cropOptions.map(opt => (
+                  <option key={opt.value} value={opt.value}>{opt.label}</option>
+                ))}
               </select>
             </div>
             <div className="filter-group">
               <label htmlFor="date">Data</label>
-              <input type="date" id="date" value={date} onChange={handleDateChange} />
+              <input
+                type="date"
+                id="date"
+                value={location.date || ''}
+                onChange={handleDateChange}
+              />
             </div>
           </div>
 
@@ -273,7 +347,7 @@ const Dashboard = () => {
           <div className="charts">
             <div className="chart-container">
               <div className="chart-title">Temperatura (Últimos 7 dias)</div>
-              <TemperatureChart city={city} />
+              <TemperatureChart city={location.city} todayTemperature={weather?.temperature} />
             </div>
             <div className="chart-container">
               <div className="chart-title">Humidade do Solo (Últimos 7 dias)</div>

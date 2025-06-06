@@ -1,10 +1,12 @@
-/* src/components/Auth/Login.css */
 .login-container {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background-color: lightgray;
+  background:
+    radial-gradient(circle at center, rgba(0,0,0,0.25) 40%, rgba(0,0,0,1) 100%),
+    url('../images/background.jpg') no-repeat center center fixed;
+  background-size: cover;
 }
 
 .login-form {
@@ -88,7 +90,9 @@
   bottom: 0;
   width: 100vw;
   height: 100vh;
-  background: lightgray;
+  background:
+    radial-gradient(circle at center, rgba(0,0,0,0.18) 40%, rgba(0,0,0,1) 100%),
+    lightgray;
   display: flex;
   align-items: center;
   justify-content: center;

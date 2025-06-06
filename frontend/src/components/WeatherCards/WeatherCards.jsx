@@ -2,6 +2,29 @@ import React, { useContext } from 'react';
 import { WeatherContext } from '../../context/WeatherContext';
 import './WeatherCards.css';
 
+// Map OpenWeatherMap icon codes to weather types
+const iconMap = {
+  "01d": "Clear", "01n": "Clear",
+  "02d": "Clouds", "02n": "Clouds",
+  "03d": "Clouds", "03n": "Clouds",
+  "04d": "Clouds", "04n": "Clouds",
+  "09d": "Rain", "09n": "Rain",
+  "10d": "Rain", "10n": "Rain",
+  "11d": "Thunderstorm", "11n": "Thunderstorm",
+  "13d": "Snow", "13n": "Snow",
+  "50d": "Mist", "50n": "Mist"
+};
+
+const weatherMap = {
+  Clear: { icon: "fas fa-sun", color: "#FFD600", label: "Ensolarado" },
+  Clouds: { icon: "fas fa-cloud", color: "#90A4AE", label: "Nublado" },
+  Rain: { icon: "fas fa-cloud-showers-heavy", color: "#2196F3", label: "Chuva" },
+  Drizzle: { icon: "fas fa-cloud-rain", color: "#64B5F6", label: "Garoa" },
+  Thunderstorm: { icon: "fas fa-bolt", color: "#757575", label: "Trovoada" },
+  Snow: { icon: "fas fa-snowflake", color: "#B3E5FC", label: "Neve" },
+  Mist: { icon: "fas fa-smog", color: "#B0BEC5", label: "Névoa" }
+};
+
 const WeatherCards = () => {
   const { weather, loading } = useContext(WeatherContext);
 
@@ -9,8 +32,38 @@ const WeatherCards = () => {
     return <div className="loading">Carregando dados meteorológicos...</div>;
   }
 
+  // Use icon code to determine weather type
+  const mainWeather = iconMap[weather.icon] || "Clear";
+  const weatherInfo = weatherMap[mainWeather] || {
+    icon: "fas fa-question",
+    color: "#BDBDBD",
+    label: weather.description || "Desconhecido"
+  };
+
   return (
     <div className="dashboard-cards">
+      {/* Weather status card */}
+      <div className="card" style={{ borderColor: weatherInfo.color }}>
+        <div className="card-header">
+          <div className="card-title">Tempo Atual</div>
+          <div className="card-icon" style={{
+            background: weatherInfo.color,
+            color: "#fff",
+            borderRadius: "50%",
+            width: 40,
+            height: 40,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center"
+          }}>
+            <i className={weatherInfo.icon}></i>
+          </div>
+        </div>
+        <div className="card-value">{weatherInfo.label}</div>
+        <div className="card-footer">{weather.description}</div>
+      </div>
+
+      {/* Temperatura */}
       <div className="card">
         <div className="card-header">
           <div className="card-title">Temperatura</div>
@@ -21,7 +74,8 @@ const WeatherCards = () => {
         <div className="card-value">{weather.temperature}°C</div>
         <div className="card-footer">Máx: {weather.temp_max}°C | Mín: {weather.temp_min}°C</div>
       </div>
-      
+
+      {/* Humidade */}
       <div className="card">
         <div className="card-header">
           <div className="card-title">Humidade</div>
@@ -30,9 +84,10 @@ const WeatherCards = () => {
           </div>
         </div>
         <div className="card-value">{weather.humidity}%</div>
-        <div className="card-footer">Ar: {weather.humidity}% | Solo: {weather.soil_humidity}%</div>
+        <div className="card-footer">Últimas 24h</div>
       </div>
-      
+
+      {/* Precipitação */}
       <div className="card">
         <div className="card-header">
           <div className="card-title">Precipitação</div>
@@ -43,7 +98,8 @@ const WeatherCards = () => {
         <div className="card-value">{weather.precipitation}mm</div>
         <div className="card-footer">Últimas 24h</div>
       </div>
-      
+
+      {/* Vento */}
       <div className="card">
         <div className="card-header">
           <div className="card-title">Velocidade do Vento</div>

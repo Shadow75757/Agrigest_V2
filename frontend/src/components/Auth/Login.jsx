@@ -121,7 +121,7 @@ const Login = () => {
             />
           </div>
           <button type="submit" className="login-button" disabled={loading}>
-            {loading ? 'Entrando...' : 'Entrar'}
+            {loading ? 'A entrar...' : 'Entrar'}
           </button>
           <button
             onClick={handleGuestLogin}

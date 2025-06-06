@@ -45,41 +45,34 @@ const HistoryTable = () => {
   const getStatusText = (status) => {
     return status === 'completed' ? 'Concluído' : 'Pendente';
   };
-
   return (
-    <div className="history">
-      <div className="history-header">
-        <div className="history-title">Histórico de Ações</div>
-        <div className="view-all">Ver Tudo</div>
-      </div>
-      
-      <table className="history-table">
-        <thead>
-          <tr>
-            <th>Data</th>
-            <th>Ação</th>
-            <th>Cultura</th>
-            <th>Status</th>
-            <th>Detalhes</th>
+
+    <table className="history-table">
+      <thead>
+        <tr>
+          <th>Data</th>
+          <th>Ação</th>
+          <th>Cultivo</th>
+          <th>Status</th>
+          <th>Detalhes</th>
+        </tr>
+      </thead>
+      <tbody>
+        {data.map((item, index) => (
+          <tr key={index}>
+            <td>{item.date}</td>
+            <td>{item.action}</td>
+            <td>{item.crop}</td>
+            <td>
+              <span className={`status ${getStatusClass(item.status)}`}>
+                {getStatusText(item.status)}
+              </span>
+            </td>
+            <td>{item.details}</td>
           </tr>
-        </thead>
-        <tbody>
-          {data.map((item, index) => (
-            <tr key={index}>
-              <td>{item.date}</td>
-              <td>{item.action}</td>
-              <td>{item.crop}</td>
-              <td>
-                <span className={`status ${getStatusClass(item.status)}`}>
-                  {getStatusText(item.status)}
-                </span>
-              </td>
-              <td>{item.details}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+        ))}
+      </tbody>
+    </table>
   );
 };
 

@@ -497,12 +497,10 @@ body {
   }
 }
 
-/* City Suggestions Dropdown */
 .city-suggestions {
   position: absolute;
   width: 100%;
   max-width: 350px;
-  /* or match your input width */
   background: #fff;
   border: 1px solid #ddd;
   border-radius: 6px;
@@ -513,7 +511,6 @@ body {
   padding: 0;
   transition: box-shadow 0.2s;
   max-height: 150px;
-  /* About 3 items */
   overflow-y: auto;
 }
 
@@ -537,4 +534,206 @@ body {
 .city-suggestions li:focus {
   background: #e3f2fd;
   color: #1976d2;
+}
+
+/* Dark mode com tons de cinza (exceto sidebar verde escuro) - NOVO BLOCO */
+body.dark-mode {
+  background: linear-gradient(135deg, #232324 0%, #18191a 100%);
+  color: #f1f1f1;
+}
+
+body.dark-mode .dashboard {
+  background: transparent;
+}
+
+body.dark-mode .main-content {
+  background: #232324;
+  color: #f1f1f1;
+}
+
+body.dark-mode .sidebar {
+  background-color: #245c2a;
+  /* Verde escuro só na sidebar */
+  color: #f1f1f1;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.25);
+}
+
+body.dark-mode .nav-item {
+  background: transparent;
+  color: #f1f1f1;
+}
+
+body.dark-mode .nav-item.active,
+body.dark-mode .nav-item:hover,
+body.dark-mode .settings-option:hover,
+body.dark-mode .settings-option:focus {
+  background-color: #388e3c;
+  color: #fff;
+}
+
+body.dark-mode .logo {
+  background: transparent;
+  color: #a5d6a7;
+  border-bottom: 1px solid #388e3c;
+}
+
+body.dark-mode .card,
+body.dark-mode .chart-container,
+body.dark-mode .suggestions,
+body.dark-mode .history,
+body.dark-mode .settings-dropdown {
+  background: #232324;
+  color: #f1f1f1;
+  border-color: #333;
+}
+
+body.dark-mode .card-title,
+body.dark-mode .suggestions-title,
+body.dark-mode .history-title {
+  color: #e0e0e0;
+}
+
+body.dark-mode .card-footer,
+body.dark-mode .suggestion-desc,
+body.dark-mode .history-table td {
+  color: #bdbdbd;
+}
+
+body.dark-mode input,
+body.dark-mode select,
+body.dark-mode textarea {
+  background: #2c2c2e;
+  color: #f1f1f1;
+  border-color: #444;
+}
+
+body.dark-mode .city-suggestions {
+  background: hsl(240, 1%, 14%);
+  color: #f1f1f1;
+  border-color: #333;
+}
+
+body.dark-mode .city-suggestions li {
+  background: #285c2c;
+  color: #f1f1f1;
+}
+
+body.dark-mode .city-suggestions li:hover,
+body.dark-mode .city-suggestions li:focus {
+  background: #333;
+  color: #fff;
+}
+
+.settings-dropdown {
+  position: absolute;
+  left: 0;
+  top: 100%;
+  width: 100%;
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  background: #307c34;
+  color: #f1f1f1;
+  border-radius: 0 0 8px 8px;
+  border: none;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  z-index: 20;
+  padding: 0;
+  transform: translateY(-10px);
+  transition:
+    opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    padding 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    background 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+
+.settings-dropdown.open {
+  opacity: 1;
+  max-height: 80px;
+  padding: 8px 0;
+  transform: translateY(0);
+}
+
+.settings-option {
+  padding: 15px 25px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  color: inherit;
+  width: 100%;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+body,
+.dashboard,
+.main-content,
+.sidebar,
+.card,
+.settings-dropdown,
+.filters,
+.filter-group,
+.suggestions,
+.charts,
+.chart-container,
+.history,
+.history-header,
+.history-table,
+.city-suggestions,
+.nav-item,
+.logo,
+input,
+select,
+textarea {
+  transition:
+    background 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.arrow-icon {
+  display: inline-block;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.arrow-icon.open {
+  transform: rotate(180deg);
+}
+
+/* Make sure .settings-dropdown is positioned and transitions correctly */
+.settings-dropdown {
+  position: absolute;
+  left: 0;
+  top: 100%;
+  width: 100%;
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  background: #307c34;
+  color: #f1f1f1;
+  border-radius: 0 0 8px 8px;
+  border: none;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  z-index: 20;
+  padding: 0;
+  transform: translateY(-10px);
+  transition:
+    opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    padding 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    background 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.settings-dropdown.open {
+  opacity: 1;
+  max-height: 80px;
+  padding: 8px 0;
+  transform: translateY(0);
 }
