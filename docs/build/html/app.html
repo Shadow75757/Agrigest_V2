@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>App &#8212; Agrigest  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=27fed22d" />
+    <script src="_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="OpenWeatherMap API" href="openweathermap_api.html" />
+    <link rel="prev" title="Agrigest documentation" href="index.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="module-backend.app">
+<span id="app"></span><h1>App<a class="headerlink" href="#module-backend.app" title="Link to this heading">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="backend.app.ConfigManager">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">backend.app.</span></span><span class="sig-name descname"><span class="pre">ConfigManager</span></span><a class="headerlink" href="#backend.app.ConfigManager" title="Link to this definition">¶</a></dt>
+<dd><p>Manage configuration as a singleton.</p>
+<p>This class ensures only one instance exists and loads configuration
+such as API keys from environment variables or uses default values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>_instance</strong> – The singleton instance of the class.</p></li>
+<li><p><strong>config</strong> – The configuration dictionary containing API keys and other settings.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="backend.app.ConfigManager.load_config">
+<span class="sig-name descname"><span class="pre">load_config</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#backend.app.ConfigManager.load_config" title="Link to this definition">¶</a></dt>
+<dd><p>Load API keys and other config from environment or defaults.</p>
+<p>Loads configuration values such as API keys from environment variables,
+or uses default values if not set.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="backend.app.OpenWeatherMapStrategy">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">backend.app.</span></span><span class="sig-name descname"><span class="pre">OpenWeatherMapStrategy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_key</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#backend.app.OpenWeatherMapStrategy" title="Link to this definition">¶</a></dt>
+<dd><p>Implement strategy for using OpenWeatherMap API.</p>
+<p>Implements methods to fetch current weather and forecast using OpenWeatherMap.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>api_key</strong> – The API key for OpenWeatherMap.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="backend.app.OpenWeatherMapStrategy.get_forecast">
+<span class="sig-name descname"><span class="pre">get_forecast</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">city</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#backend.app.OpenWeatherMapStrategy.get_forecast" title="Link to this definition">¶</a></dt>
+<dd><p>Fetch weather forecast from OpenWeatherMap.</p>
+<p>Retrieves the weather forecast data for the specified city using the OpenWeatherMap API.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>city</strong> (<em>str</em>) – The name of the city.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The weather forecast data for the city.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="backend.app.OpenWeatherMapStrategy.get_weather">
+<span class="sig-name descname"><span class="pre">get_weather</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">city</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#backend.app.OpenWeatherMapStrategy.get_weather" title="Link to this definition">¶</a></dt>
+<dd><p>Fetch current weather from OpenWeatherMap.</p>
+<p>Retrieves the current weather data for the specified city using the OpenWeatherMap API.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>city</strong> (<em>str</em>) – The name of the city.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The current weather data for the city.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="backend.app.WeatherServiceFacade">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">backend.app.</span></span><span class="sig-name descname"><span class="pre">WeatherServiceFacade</span></span><a class="headerlink" href="#backend.app.WeatherServiceFacade" title="Link to this definition">¶</a></dt>
+<dd><p>Provide a simple interface to get weather data and forecast.</p>
+<p>This class hides the complexity of different weather API strategies and
+provides a unified interface for fetching weather data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config</strong> – The configuration manager instance.</p></li>
+<li><p><strong>strategy</strong> – The weather API strategy used for fetching data.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="backend.app.WeatherServiceFacade.get_forecast">
+<span class="sig-name descname"><span class="pre">get_forecast</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">city</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#backend.app.WeatherServiceFacade.get_forecast" title="Link to this definition">¶</a></dt>
+<dd><p>Get weather forecast for a city.</p>
+<p>Fetches the weather forecast data for the specified city using the selected strategy.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>city</strong> (<em>str</em>) – The name of the city.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The weather forecast data for the city.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="backend.app.WeatherServiceFacade.get_weather_data">
+<span class="sig-name descname"><span class="pre">get_weather_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">city</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#backend.app.WeatherServiceFacade.get_weather_data" title="Link to this definition">¶</a></dt>
+<dd><p>Get current weather for a city.</p>
+<p>Fetches the current weather data for the specified city using the selected strategy.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>city</strong> (<em>str</em>) – The name of the city.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The current weather data for the city.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="backend.app.WeatherStrategy">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">backend.app.</span></span><span class="sig-name descname"><span class="pre">WeatherStrategy</span></span><a class="headerlink" href="#backend.app.WeatherStrategy" title="Link to this definition">¶</a></dt>
+<dd><p>Define base class for weather API strategies.</p>
+<p>Subclasses should implement methods to fetch weather data.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="backend.app.WeatherStrategy.get_weather">
+<span class="sig-name descname"><span class="pre">get_weather</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">city</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#backend.app.WeatherStrategy.get_weather" title="Link to this definition">¶</a></dt>
+<dd><p>Get current weather for a city.</p>
+<p>This method should be implemented by subclasses to fetch weather data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>city</strong> (<em>str</em>) – The name of the city.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The current weather data for the city.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="backend.app.api_weather_temperature">
+<span class="sig-prename descclassname"><span class="pre">backend.app.</span></span><span class="sig-name descname"><span class="pre">api_weather_temperature</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#backend.app.api_weather_temperature" title="Link to this definition">¶</a></dt>
+<dd><p>Define API endpoint to get temperature data for charting.</p>
+<p>Returns temperature values and labels (dates) for a city,
+formatted for use in charts.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>JSON response containing temperature values and labels.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Response</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="backend.app.get_forecast">
+<span class="sig-prename descclassname"><span class="pre">backend.app.</span></span><span class="sig-name descname"><span class="pre">get_forecast</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">city</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#backend.app.get_forecast" title="Link to this definition">¶</a></dt>
+<dd><p>Define API endpoint to get weather forecast for a city.</p>
+<p>Returns forecast data as JSON for the specified city.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>city</strong> (<em>str</em>) – The name of the city.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>JSON response containing forecast data.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Response</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="backend.app.get_weather">
+<span class="sig-prename descclassname"><span class="pre">backend.app.</span></span><span class="sig-name descname"><span class="pre">get_weather</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">city</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#backend.app.get_weather" title="Link to this definition">¶</a></dt>
+<dd><p>Define API endpoint to get current weather for a city.</p>
+<p>Returns weather data as JSON for the specified city.
+Handles errors and returns appropriate HTTP status codes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>city</strong> (<em>str</em>) – The name of the city.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>JSON response containing weather data or error message.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Response</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="backend.app.handle_connect">
+<span class="sig-prename descclassname"><span class="pre">backend.app.</span></span><span class="sig-name descname"><span class="pre">handle_connect</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#backend.app.handle_connect" title="Link to this definition">¶</a></dt>
+<dd><p>Handle new WebSocket connection.</p>
+<p>Prints a message when a client connects via WebSocket.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="backend.app.handle_disconnect">
+<span class="sig-prename descclassname"><span class="pre">backend.app.</span></span><span class="sig-name descname"><span class="pre">handle_disconnect</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#backend.app.handle_disconnect" title="Link to this definition">¶</a></dt>
+<dd><p>Handle WebSocket disconnection.</p>
+<p>Prints a message when a client disconnects from WebSocket.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="backend.app.handle_subscribe_weather">
+<span class="sig-prename descclassname"><span class="pre">backend.app.</span></span><span class="sig-name descname"><span class="pre">handle_subscribe_weather</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#backend.app.handle_subscribe_weather" title="Link to this definition">¶</a></dt>
+<dd><p>Handle subscription to weather updates for a city.</p>
+<p>Periodically sends weather updates for the specified city
+to the client via WebSocket.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>dict</em>) – Dictionary containing the city name.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="backend.app.login">
+<span class="sig-prename descclassname"><span class="pre">backend.app.</span></span><span class="sig-name descname"><span class="pre">login</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#backend.app.login" title="Link to this definition">¶</a></dt>
+<dd><p>Define API endpoint for user login.</p>
+<p>Checks credentials against hardcoded users and returns a token if valid.
+Allows guest login with a special token.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>JSON response containing token and user info, or error message.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Response</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Agrigest</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">App</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#backend.app.ConfigManager"><code class="docutils literal notranslate"><span class="pre">ConfigManager</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#backend.app.OpenWeatherMapStrategy"><code class="docutils literal notranslate"><span class="pre">OpenWeatherMapStrategy</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#backend.app.WeatherServiceFacade"><code class="docutils literal notranslate"><span class="pre">WeatherServiceFacade</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#backend.app.WeatherStrategy"><code class="docutils literal notranslate"><span class="pre">WeatherStrategy</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#backend.app.api_weather_temperature"><code class="docutils literal notranslate"><span class="pre">api_weather_temperature()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#backend.app.get_forecast"><code class="docutils literal notranslate"><span class="pre">get_forecast()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#backend.app.get_weather"><code class="docutils literal notranslate"><span class="pre">get_weather()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#backend.app.handle_connect"><code class="docutils literal notranslate"><span class="pre">handle_connect()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#backend.app.handle_disconnect"><code class="docutils literal notranslate"><span class="pre">handle_disconnect()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#backend.app.handle_subscribe_weather"><code class="docutils literal notranslate"><span class="pre">handle_subscribe_weather()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#backend.app.login"><code class="docutils literal notranslate"><span class="pre">login()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="openweathermap_api.html">OpenWeatherMap API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="test_app.html">Testes da App</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">Agrigest documentation</a></li>
+      <li>Next: <a href="openweathermap_api.html" title="next chapter">OpenWeatherMap API</a></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Prata/Luis/Sergio.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="_sources/app.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

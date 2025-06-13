@@ -15,5 +15,7 @@ documentation for details.
    :maxdepth: 2
    :caption: Contents:
 
-   backend
+   app
+   openweathermap_api
+   test_app
 
