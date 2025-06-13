@@ -1,7 +1,7 @@
-// Simulação de chamada à API OpenWeatherMap
+// Simulates an API call to OpenWeatherMap providing weather data for a given city
 export const fetchWeatherData = async (city) => {
-  // Em uma aplicação real, isso seria uma chamada à API
-  // Aqui estamos simulando dados
+  // In a real application, this would be an actual API request.
+  // Here, it returns simulated weather data after a delay.
   return new Promise((resolve) => {
     setTimeout(() => {
       const weatherData = {
@@ -28,16 +28,41 @@ export const fetchWeatherData = async (city) => {
   });
 };
 
-// Simulação de WebSocket para atualizações em tempo real
+// Simulates a WebSocket connection for real-time weather updates
 export const setupWeatherWebSocket = (onUpdate) => {
-  // Em uma aplicação real, isso seria uma conexão WebSocket
+  // In a real application, this would open a WebSocket connection.
+  // Here, it triggers periodic updates via a timer.
   const interval = setInterval(() => {
-    const randomVariation = Math.random() * 2 - 1; // -1 a 1
+    const randomVariation = Math.random() * 2 - 1; // generates a random number between -1 and 1
     onUpdate({
       temperature: 24 + randomVariation,
       humidity: 65 + randomVariation * 2
     });
-  }, 30000); // Atualiza a cada 30 segundos
+  }, 30000); // Updates every 30 seconds
 
+  // Returns a cleanup function to stop updates
   return () => clearInterval(interval);
 };
+
+/**
+ * Simulates an API call to fetch weather data for a specific city.
+ *
+ * This function imitates the behavior of calling the OpenWeatherMap API,
+ * but instead returns hardcoded weather data after a short delay. The
+ * returned data includes current conditions and a week-long historical record.
+ *
+ * :param city: The name of the city for which to fetch weather data.
+ * :return: A Promise resolving to an object containing weather details.
+ */
+
+/**
+ * Simulates a WebSocket connection for real-time weather updates.
+ *
+ * Instead of a real WebSocket, this function uses a timer to periodically
+ * invoke the provided callback with slight random variations in temperature
+ * and humidity to mimic live data updates. It returns a function that can
+ * be called to stop the updates and clean up resources.
+ *
+ * :param onUpdate: Callback function to handle incoming weather updates.
+ * :return: A function that clears the interval and stops updates when called.
+ */

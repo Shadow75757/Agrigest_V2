@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>WeatherCards.jsx &#8212; Agrigest  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=27fed22d" />
+    <script src="_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Suggestions Module" href="suggestions.html" />
+    <link rel="prev" title="WeatherContext" href="weatherContext.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="weathercards-jsx">
+<h1>WeatherCards.jsx<a class="headerlink" href="#weathercards-jsx" title="Link to this heading">¶</a></h1>
+<p>Module for displaying weather information cards using React and context.</p>
+<section id="icon-and-weather-mapping">
+<h2>Icon and Weather Mapping<a class="headerlink" href="#icon-and-weather-mapping" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>Maps OpenWeatherMap icon codes to general weather types.</p></li>
+<li><p>Defines icon classes, colors, and labels for each weather type.</p></li>
+</ul>
+</section>
+<section id="weathercards-component">
+<h2>WeatherCards Component<a class="headerlink" href="#weathercards-component" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>Accesses weather data and loading state from <cite>WeatherContext</cite>.</p></li>
+<li><p>Displays loading message while data is unavailable.</p></li>
+<li><p>Maps weather icon code to a weather type.</p></li>
+<li><p>Renders multiple cards showing:
+- Current weather status with icon and description.
+- Temperature with max and min values.
+- Humidity percentage.
+- Precipitation amount.
+- Wind speed and direction.</p></li>
+</ul>
+</section>
+<section id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>This component expects <cite>WeatherContext</cite> to provide <cite>weather</cite> and <cite>loading</cite>.</p></li>
+<li><p>Integrates with CSS styles in <cite>WeatherCards.css</cite>.</p></li>
+</ul>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Agrigest</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="app.html">App</a></li>
+<li class="toctree-l1"><a class="reference internal" href="openweathermap_api.html">OpenWeatherMap API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="test_app.html">Testes da App</a></li>
+<li class="toctree-l1"><a class="reference internal" href="appjs.html">App.js</a></li>
+<li class="toctree-l1"><a class="reference internal" href="appjsx.html">App.jsx</a></li>
+<li class="toctree-l1"><a class="reference internal" href="storageServiceTest.html">StorageService.test.js</a></li>
+<li class="toctree-l1"><a class="reference internal" href="weatherContextTest.html">WeatherContext.test.js</a></li>
+<li class="toctree-l1"><a class="reference internal" href="weatherService.html">WeatherService.js</a></li>
+<li class="toctree-l1"><a class="reference internal" href="suggestionService.html">SuggestionsService.js</a></li>
+<li class="toctree-l1"><a class="reference internal" href="storageService.html">StorageService.js</a></li>
+<li class="toctree-l1"><a class="reference internal" href="weatherContext.html">WeatherContext</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">WeatherCards.jsx</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#icon-and-weather-mapping">Icon and Weather Mapping</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#weathercards-component">WeatherCards Component</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#usage">Usage</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="suggestions.html">Suggestions Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sidebar.html">Sidebar.jsx</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historyTable.html">HistoryTable.jsx</a></li>
+<li class="toctree-l1"><a class="reference internal" href="filters.html">Filters.jsx</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="weatherContext.html" title="previous chapter">WeatherContext</a></li>
+      <li>Next: <a href="suggestions.html" title="next chapter">Suggestions Module</a></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Prata/Luis/Sergio.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="_sources/weatherCards.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

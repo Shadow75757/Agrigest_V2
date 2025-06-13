@@ -1,4 +1,4 @@
-Testes da App
+TestApp
 =============
 
 .. automodule:: backend.tests.test_app

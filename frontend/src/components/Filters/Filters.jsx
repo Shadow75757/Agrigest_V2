@@ -2,14 +2,18 @@ import React, { useContext } from 'react';
 import { WeatherContext } from '../../context/WeatherContext';
 import './Filters.css';
 
+// Component responsible for rendering location and crop filters
 const Filters = () => {
+  // Access location state and update function from WeatherContext
   const { location, updateLocation } = useContext(WeatherContext);
 
+  // Handle changes in filter inputs and update location context accordingly
   const handleChange = (e) => {
     const { name, value } = e.target;
     updateLocation({ [name]: value });
   };
 
+  // Render filter dropdowns for country, city, crop and a date input
   return (
     <div className="filters">
       <div className="filter-group">
@@ -66,3 +70,14 @@ const Filters = () => {
 };
 
 export default Filters;
+
+/**
+ * Filters component responsible for rendering and handling user input for location and crop selection.
+ * 
+ * This component consumes the WeatherContext to retrieve and update the current location state.
+ * It renders dropdown menus for selecting country, city, and crop type, and a date input field.
+ * User interactions with these inputs trigger updates to the context state to reflect the selected filters.
+ * 
+ * :return: JSX.Element representing the filters UI
+ */
+

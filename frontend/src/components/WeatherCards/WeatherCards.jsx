@@ -3,6 +3,7 @@ import { WeatherContext } from '../../context/WeatherContext';
 import './WeatherCards.css';
 
 // Map OpenWeatherMap icon codes to weather types
+// This object matches weather icon codes to general weather categories.
 const iconMap = {
   "01d": "Clear", "01n": "Clear",
   "02d": "Clouds", "02n": "Clouds",
@@ -15,6 +16,8 @@ const iconMap = {
   "50d": "Mist", "50n": "Mist"
 };
 
+// Define weather details for each general weather type
+// This object contains icon classes, colors, and labels for UI display.
 const weatherMap = {
   Clear: { icon: "fas fa-sun", color: "#FFD600", label: "Ensolarado" },
   Clouds: { icon: "fas fa-cloud", color: "#90A4AE", label: "Nublado" },
@@ -26,20 +29,25 @@ const weatherMap = {
 };
 
 const WeatherCards = () => {
+  // Access weather data and loading state from context
   const { weather, loading } = useContext(WeatherContext);
 
+  // Show loading message if data is not ready
   if (loading || !weather) {
     return <div className="loading">Carregando dados meteorológicos...</div>;
   }
 
-  // Use icon code to determine weather type
+  // Determine main weather type from icon code
   const mainWeather = iconMap[weather.icon] || "Clear";
+
+  // Get weather info for UI or fallback if unknown
   const weatherInfo = weatherMap[mainWeather] || {
     icon: "fas fa-question",
     color: "#BDBDBD",
     label: weather.description || "Desconhecido"
   };
 
+  // Render weather cards with weather details
   return (
     <div className="dashboard-cards">
       {/* Weather status card */}
@@ -63,7 +71,7 @@ const WeatherCards = () => {
         <div className="card-footer">{weather.description}</div>
       </div>
 
-      {/* Temperatura */}
+      {/* Temperature card */}
       <div className="card">
         <div className="card-header">
           <div className="card-title">Temperatura</div>
@@ -75,7 +83,7 @@ const WeatherCards = () => {
         <div className="card-footer">Máx: {weather.temp_max}°C | Mín: {weather.temp_min}°C</div>
       </div>
 
-      {/* Humidade */}
+      {/* Humidity card */}
       <div className="card">
         <div className="card-header">
           <div className="card-title">Humidade</div>
@@ -87,7 +95,7 @@ const WeatherCards = () => {
         <div className="card-footer">Últimas 24h</div>
       </div>
 
-      {/* Precipitação */}
+      {/* Precipitation card */}
       <div className="card">
         <div className="card-header">
           <div className="card-title">Precipitação</div>
@@ -99,7 +107,7 @@ const WeatherCards = () => {
         <div className="card-footer">Últimas 24h</div>
       </div>
 
-      {/* Vento */}
+      {/* Wind speed card */}
       <div className="card">
         <div className="card-header">
           <div className="card-title">Velocidade do Vento</div>
@@ -115,3 +123,15 @@ const WeatherCards = () => {
 };
 
 export default WeatherCards;
+
+/**
+ * WeatherCards component displays multiple weather information cards.
+ * It shows current weather status, temperature, humidity, precipitation, and wind speed.
+ *
+ * Uses weather data from WeatherContext.
+ * Maps weather icon codes to general weather types to determine display.
+ * Applies corresponding icons, colors, and labels for each weather type.
+ *
+ * @component
+ * @returns {JSX.Element} The rendered weather cards UI.
+ */

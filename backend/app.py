@@ -2,7 +2,7 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from flask_socketio import SocketIO
-from backend import openweathermap_api as weather_api
+import openweathermap_api as weather_api
 import json
 import os
 from datetime import datetime

@@ -16,6 +16,22 @@ documentation for details.
    :caption: Contents:
 
    app
+   appjs
+   appjsx
+   dashboard
+   filters
+   historyTable
+   humidityChart
+   login
    openweathermap_api
+   sidebar
+   storageService
+   storageServiceTest
+   suggestionService
+   suggestions
    test_app
-
+   weatherCards
+   weatherContext
+   weatherContextTest
+   weatherService
+   temperatureChart

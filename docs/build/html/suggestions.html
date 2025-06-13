@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Suggestions &#8212; Agrigest  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=27fed22d" />
+    <script src="_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="TestApp" href="test_app.html" />
+    <link rel="prev" title="SuggestionsService.js" href="suggestionService.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="suggestions">
+<h1>Suggestions<a class="headerlink" href="#suggestions" title="Link to this heading">¶</a></h1>
+<section id="mapping-of-crop-labels">
+<h2>Mapping of Crop Labels<a class="headerlink" href="#mapping-of-crop-labels" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>Contains a dictionary mapping crop keys to Portuguese labels.</p></li>
+<li><p>Used to translate crop identifiers into user-friendly crop names.</p></li>
+</ul>
+</section>
+<section id="priority-css-class-function">
+<h2>Priority CSS Class Function<a class="headerlink" href="#priority-css-class-function" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>Returns the CSS class name according to the priority level.</p></li>
+<li><p>Supports ‘high’, ‘medium’, ‘low’, and defaults to empty string.</p></li>
+</ul>
+</section>
+<section id="priority-label-function">
+<h2>Priority Label Function<a class="headerlink" href="#priority-label-function" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>Provides the Portuguese label for a given priority level.</p></li>
+<li><p>Covers ‘Alta’, ‘Média’, ‘Baixa’, or ‘Desconhecida’ for unknown priorities.</p></li>
+</ul>
+</section>
+<section id="icon-retrieval-function">
+<h2>Icon Retrieval Function<a class="headerlink" href="#icon-retrieval-function" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>Maps suggestion types to FontAwesome icon classes.</p></li>
+<li><p>Supports irrigation, fertilization, pest control, and others.</p></li>
+<li><p>Defaults to info-circle icon if type is unknown.</p></li>
+</ul>
+</section>
+<section id="suggestions-component">
+<h2>Suggestions Component<a class="headerlink" href="#suggestions-component" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>React component that consumes WeatherContext to get suggestions and location.</p></li>
+<li><p>Displays loading indicator if data is missing or loading.</p></li>
+<li><p>Shows a header with crop and city labels.</p></li>
+<li><p>Lists suggestion items with icon, title, description, and priority.</p></li>
+<li><p>Accessible with ARIA roles and labels.</p></li>
+</ul>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Agrigest</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="app.html">App</a></li>
+<li class="toctree-l1"><a class="reference internal" href="appjs.html">App.js</a></li>
+<li class="toctree-l1"><a class="reference internal" href="appjsx.html">App.jsx</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dashboard.html">Dashboard.jsx</a></li>
+<li class="toctree-l1"><a class="reference internal" href="filters.html">Filters.jsx</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historyTable.html">HistoryTable.jsx</a></li>
+<li class="toctree-l1"><a class="reference internal" href="humidityChart.html">HumidityChart.jsx</a></li>
+<li class="toctree-l1"><a class="reference internal" href="login.html">Login.jsx</a></li>
+<li class="toctree-l1"><a class="reference internal" href="openweathermap_api.html">OpenWeatherMap API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sidebar.html">Sidebar.jsx</a></li>
+<li class="toctree-l1"><a class="reference internal" href="storageService.html">StorageService.js</a></li>
+<li class="toctree-l1"><a class="reference internal" href="storageServiceTest.html">StorageService.test.js</a></li>
+<li class="toctree-l1"><a class="reference internal" href="suggestionService.html">SuggestionsService.js</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Suggestions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#mapping-of-crop-labels">Mapping of Crop Labels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#priority-css-class-function">Priority CSS Class Function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#priority-label-function">Priority Label Function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#icon-retrieval-function">Icon Retrieval Function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#suggestions-component">Suggestions Component</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="test_app.html">TestApp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="weatherCards.html">WeatherCards.jsx</a></li>
+<li class="toctree-l1"><a class="reference internal" href="weatherContext.html">WeatherContext</a></li>
+<li class="toctree-l1"><a class="reference internal" href="weatherContextTest.html">WeatherContext.test.js</a></li>
+<li class="toctree-l1"><a class="reference internal" href="weatherService.html">WeatherService.js</a></li>
+<li class="toctree-l1"><a class="reference internal" href="temperatureChart.html">TemperatureChart.jsx</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="suggestionService.html" title="previous chapter">SuggestionsService.js</a></li>
+      <li>Next: <a href="test_app.html" title="next chapter">TestApp</a></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Prata/Luis/Sergio.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="_sources/suggestions.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

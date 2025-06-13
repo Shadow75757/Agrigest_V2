@@ -2,8 +2,7 @@ import React, { useContext } from 'react';
 import { WeatherContext } from '../../context/WeatherContext';
 import './Suggestions.css';
 
-
-// Mapeamento dos labels dos cultivos
+// Mapping of crop keys to their Portuguese labels
 const cropLabels = {
   vine: 'Videira',
   olive: 'Oliveira',
@@ -51,81 +50,77 @@ const cropLabels = {
   avocado: 'Abacate'
 };
 
+// Returns the CSS class name based on priority level
+const getPriorityClass = (priority) => {
+  switch (priority) {
+    case 'high': return 'priority-high';
+    case 'medium': return 'priority-medium';
+    case 'low': return 'priority-low';
+    default: return '';
+  }
+};
 
+// Returns the Portuguese label for the priority level
+const getPriorityLabel = (priority) => {
+  switch (priority) {
+    case 'high': return 'Alta';
+    case 'medium': return 'Média';
+    case 'low': return 'Baixa';
+    default: return 'Desconhecida';
+  }
+};
 
+// Returns the FontAwesome icon class based on suggestion type
+const getIcon = (type) => {
+  switch (type) {
+    case 'irrigation': return 'fas fa-tint';
+    case 'fertilization': return 'fas fa-spray-can';
+    case 'pest_control': return 'fas fa-bug';
+    case 'sun_exposure': return 'fas fa-sun';
+    case 'disease': return 'fas fa-virus';
+    case 'frost': return 'fas fa-snowflake';
+    case 'wind': return 'fas fa-wind';
+    case 'harvest': return 'fas fa-tractor';
+    case 'heat': return 'fas fa-temperature-high';
+    case 'cold': return 'fas fa-temperature-low';
+    case 'humidity': return 'fas fa-water';
+    default: return 'fas fa-info-circle';
+  }
+};
+
+// React component to render agricultural suggestions based on weather context
 const Suggestions = () => {
   const { suggestions, location, loading } = useContext(WeatherContext);
 
-  if (loading || !suggestions || suggestions.length === 0) {
+  // Show loading state if data is not ready or missing
+  if (loading || !suggestions || suggestions.length === 0 || !location) {
     return <div className="loading">Carregando sugestões...</div>;
   }
 
-  const getPriorityClass = (priority) => {
-    switch (priority) {
-      case 'high':
-        return 'priority-high';
-      case 'medium':
-        return 'priority-medium';
-      case 'low':
-        return 'priority-low';
-      default:
-        return '';
-    }
-  };
-
-  const getIcon = (type) => {
-    switch (type) {
-      case 'irrigation':
-        return 'fas fa-tint';
-      case 'fertilization':
-        return 'fas fa-spray-can';
-      case 'pest_control':
-        return 'fas fa-bug';
-      case 'sun_exposure':
-        return 'fas fa-sun';
-      case 'disease':
-        return 'fas fa-virus';
-      case 'frost':
-        return 'fas fa-snowflake';
-      case 'wind':
-        return 'fas fa-wind';
-      case 'harvest':
-        return 'fas fa-tractor';
-      case 'heat':
-        return 'fas fa-temperature-high';
-      case 'cold':
-        return 'fas fa-temperature-low';
-      case 'humidity':
-        return 'fas fa-water';
-      default:
-        return 'fas fa-info-circle';
-    }
-  };
+  // Get the crop label from the mapping or fallback to the raw crop key
+  const cropLabel = cropLabels[location.crop] || location.crop || 'Cultura';
 
   return (
-    <div className="suggestions">
+    <div className="suggestions" role="region" aria-label="Sugestões agrícolas">
       <div className="suggestions-header">
-        <div className="suggestions-title">
-          Sugestões Agrícolas para {cropLabels[location.crop] || location.crop}, {location.city}
-        </div>
-        <div className="last-update">Atualizado agora</div>
+        <h2 className="suggestions-title">
+          Sugestões Agrícolas para {cropLabel}, {location.city || 'Localização'}
+        </h2>
+        <div className="last-update" aria-live="polite">Atualizado agora</div>
       </div>
 
+      {/* Iterate over suggestions and render each item */}
       {suggestions.map((suggestion, index) => (
-        <div className="suggestion-item" key={index}>
-          <div className="suggestion-icon">
-            <i className={getIcon(suggestion.type)}></i>
+        <div className="suggestion-item" key={suggestion.id || index}>
+          <div className="suggestion-icon" aria-hidden="true">
+            <i className={getIcon(suggestion.type)} aria-label={suggestion.type}></i>
           </div>
           <div className="suggestion-text">
             <div className="suggestion-title">{suggestion.title}</div>
             <div className="suggestion-desc">{suggestion.description}</div>
           </div>
           <div className={`suggestion-priority ${getPriorityClass(suggestion.priority)}`}>
-            {suggestion.priority === 'high'
-              ? 'Alta'
-              : suggestion.priority === 'medium'
-                ? 'Média'
-                : 'Baixa'}
+            {getPriorityLabel(suggestion.priority)}
           </div>
         </div>
       ))}
@@ -134,3 +129,54 @@ const Suggestions = () => {
 };
 
 export default Suggestions;
+
+/**
+ * @module Suggestions
+ */
+
+/**
+ * Mapping of crop keys to their Portuguese labels.
+ *
+ * This object is used to translate crop identifiers into human-readable crop names in Portuguese.
+ * It helps to display user-friendly crop names in the suggestions UI.
+ */
+
+/**
+ * Returns the CSS class name based on priority level.
+ *
+ * This function maps the priority string ('high', 'medium', 'low') to corresponding CSS class names
+ * that apply specific styling for visual priority indication.
+ *
+ * :param priority: The priority level string.
+ * :return: The CSS class name for the priority.
+ */
+
+/**
+ * Returns the Portuguese label for the priority level.
+ *
+ * This function converts the priority string into a human-readable label in Portuguese
+ * to be displayed alongside the suggestion.
+ *
+ * :param priority: The priority level string.
+ * :return: The Portuguese label for the priority.
+ */
+
+/**
+ * Returns the FontAwesome icon class based on suggestion type.
+ *
+ * This function maps different suggestion types to corresponding FontAwesome icon classes,
+ * allowing visual representation of the suggestion category.
+ *
+ * :param type: The type of suggestion (e.g., 'irrigation', 'pest_control').
+ * :return: The FontAwesome icon class string.
+ */
+
+/**
+ * React component to render agricultural suggestions based on weather context.
+ *
+ * This component consumes weather-related suggestions and location information from the
+ * WeatherContext. It displays a list of suggestions, each with an icon, title, description,
+ * and priority label. While data is loading or unavailable, it shows a loading indicator.
+ *
+ * :return: JSX element rendering the suggestions UI.
+ */

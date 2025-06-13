@@ -14,7 +14,7 @@ import Modal from 'react-modal';
 
 const FADE_DURATION = 500; // ms
 
-// Lista de cultivos ordenada alfabeticamente pelo label
+// alphabetical list of crops
 const cropOptions = [
   { value: "vine", label: "Videira" },
   { value: "olive", label: "Oliveira" },
@@ -63,20 +63,38 @@ const cropOptions = [
   { value: "avocado", label: "Abacate" }
 ].sort((a, b) => a.label.localeCompare(b.label));
 
+/**
+ * Dashboard component responsible for rendering the main user interface,
+ * handling dark mode toggle, user information display, location and weather context,
+ * and managing countries and city suggestions.
+ */
 const Dashboard = () => {
+  // Get current location from react-router
   const routerLocation = useLocation();
+
+  // Extract location, updateLocation function and weather data from WeatherContext
   const { location, updateLocation, weather } = useContext(WeatherContext);
+
+  // State to control if an overlay should be shown, initial value derived from router state
   const [showOverlay, setShowOverlay] = useState(
     routerLocation.state && routerLocation.state.showOverlay
   );
+
+  // State to control fade out animation
   const [fadeOut, setFadeOut] = useState(false);
 
-  // Dark mode & settings dropdown
+  // State for whether settings dropdown is open (dark mode & other settings)
   const [settingsOpen, setSettingsOpen] = useState(false);
+
+  // State for dark mode enabled/disabled, initialized from localStorage
   const [darkMode, setDarkMode] = useState(() => {
     return localStorage.getItem('darkMode') === 'true';
   });
 
+  /**
+   * Side effect that applies or removes dark mode CSS class on <body>,
+   * and persists the dark mode state in localStorage.
+   */
   useEffect(() => {
     if (darkMode) {
       document.body.classList.add('dark-mode');
@@ -86,24 +104,38 @@ const Dashboard = () => {
     localStorage.setItem('darkMode', darkMode);
   }, [darkMode]);
 
+  /**
+   * Toggles the dark mode state between true and false.
+   */
   const toggleDarkMode = () => setDarkMode((prev) => !prev);
 
-  // User info from localStorage
+  // Retrieve user information from localStorage or provide defaults
   const username = localStorage.getItem('username') || 'Utilizador';
   const gender = localStorage.getItem('gender') || 'male';
   const randomNum = localStorage.getItem('userImgNum') || 1;
+
+  // Determine the user image URL based on username and gender
   let userImg;
   if (username === 'guest') {
-    userImg = defaultUserIcon;
+    userImg = defaultUserIcon; // Use a default icon for guest users
   } else {
     userImg = `https://randomuser.me/api/portraits/${gender === 'male' ? 'men' : 'women'}/${randomNum}.jpg`;
   }
 
-  // Países e sugestões de cidades
+  // State to store the list of countries fetched from an API
   const [countries, setCountries] = useState([]);
+
+  // State to hold city suggestions for user input
   const [citySuggestions, setCitySuggestions] = useState([]);
+
+  // Ref to hold a debounce timer ID for throttling suggestion fetches
   const suggestionDebounce = useRef(null);
 
+  /**
+   * Effect that fetches the list of countries from restcountries.com API once on mount.
+   * It maps and sorts countries by their Portuguese common name or fallback to default name.
+   * On error, it logs to the console.
+   */
   useEffect(() => {
     const fetchCountries = async () => {
       try {
@@ -122,6 +154,13 @@ const Dashboard = () => {
     fetchCountries();
   }, []);
 
+  /**
+   * Effect to get user's current city using browser geolocation API on component mount.
+   * If location.city is not set and geolocation is available,
+   * it retrieves latitude and longitude, then reverse geocodes using OpenStreetMap Nominatim API.
+   * Updates location with city, town or village if found.
+   * Silent failure if any error occurs.
+   */
   useEffect(() => {
     if (!location.city && navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(async (position) => {
@@ -139,14 +178,18 @@ const Dashboard = () => {
             updateLocation({ city: data.address.village });
           }
         } catch (err) {
-          // Se falhar, não faz nada
+          // Do nothing on failure
         }
       });
     }
     // eslint-disable-next-line
   }, []);
 
-  // Debounce para sugestões de cidades
+  /**
+   * Handler for city input field changes.
+   * Updates location.city and debounces API calls for city suggestions.
+   * Clears suggestions if input is empty or too short (<2 chars).
+   */
   const handleCityChange = (e) => {
     const input = e.target.value;
     updateLocation({ city: input });
@@ -161,6 +204,13 @@ const Dashboard = () => {
     }, 600);
   };
 
+  /**
+   * Fetches city suggestions from GeoDB Cities API based on user input.
+   * Filters by selected country or defaults to Portugal ('PT').
+   * Limits to 5 cities sorted by descending population.
+   * On success, updates citySuggestions state with city names.
+   * On error, clears citySuggestions.
+   */
   const fetchCitySuggestions = async (input) => {
     try {
       const response = await axios.get(`https://wft-geo-db.p.rapidapi.com/v1/geo/cities`, {
@@ -182,6 +232,11 @@ const Dashboard = () => {
     }
   };
 
+  /**
+   * Handler for country selection change.
+   * Updates location with selected country and resets city to empty.
+   * Clears city suggestions.
+   */
   const handleCountryChange = (e) => {
     const selected = countries.find(c => c.name === e.target.value);
     updateLocation({
@@ -191,19 +246,37 @@ const Dashboard = () => {
     setCitySuggestions([]);
   };
 
+  /**
+   * Handler for crop input changes.
+   * Updates location.crop with new value.
+   */
   const handleCropChange = (e) => {
     updateLocation({ crop: e.target.value });
   };
 
+  /**
+   * Handler for date input changes.
+   * Updates location.date with new value.
+   */
   const handleDateChange = (e) => {
     updateLocation({ date: e.target.value });
   };
 
+  /**
+   * Handler when user clicks on a city suggestion.
+   * Updates location.city with the selected suggestion and clears suggestions list.
+   */
   const handleSuggestionClick = (suggestion) => {
     updateLocation({ city: suggestion });
     setCitySuggestions([]);
   };
 
+  /**
+   * Effect to control overlay visibility and fade out animation.
+   * When showOverlay is true, triggers fade out after 500ms,
+   * then hides overlay after fade out duration.
+   * Cleans up timers on unmount or showOverlay change.
+   */
   useEffect(() => {
     if (showOverlay) {
       const timer = setTimeout(() => setFadeOut(true), 500);
@@ -217,35 +290,53 @@ const Dashboard = () => {
 
   return (
     <>
+      {/* Overlay loading screen shown if showOverlay is true */}
       {showOverlay && (
         <div className={`loading-overlay fade-in${fadeOut ? ' fade-out' : ''}`}>
           <img src={logo} alt="Logo" className="loading-logo" />
         </div>
       )}
+
+      {/* Dashboard wrapper container */}
       <div className="dashboard">
-        {/* Sidebar */}
+
+        {/* Sidebar navigation panel */}
         <div className="sidebar">
+
+          {/* App logo section */}
           <div className="logo">
             <i className="fas fa-leaf"></i>
             <h2>Agrigest</h2>
           </div>
+
+          {/* Navigation menu items */}
           <div className="nav-menu">
+
+            {/* Dashboard item - marked as active */}
             <div className="nav-item active">
               <i className="fas fa-tachometer-alt"></i>
               <span>Dashboard</span>
             </div>
+
+            {/* Locations navigation item */}
             <div className="nav-item">
               <i className="fas fa-map-marker-alt"></i>
               <span>Localizações</span>
             </div>
+
+            {/* Analytics navigation item */}
             <div className="nav-item">
               <i className="fas fa-chart-line"></i>
               <span>Análises</span>
             </div>
+
+            {/* History navigation item */}
             <div className="nav-item">
               <i className="fas fa-history"></i>
               <span>Histórico</span>
             </div>
+
+            {/* Settings dropdown item with toggleable sub-options */}
             <div
               className="nav-item"
               onClick={() => setSettingsOpen((v) => !v)}
@@ -253,13 +344,19 @@ const Dashboard = () => {
             >
               <i className="fas fa-cog"></i>
               <span>Configurações</span>
+
+              {/* Arrow indicator for dropdown */}
               <span
                 className={`arrow-icon${settingsOpen ? ' open' : ''}`}
                 style={{ marginLeft: 8 }}
               >
                 ▼
               </span>
+
+              {/* Settings dropdown panel */}
               <div className={`settings-dropdown${settingsOpen ? ' open' : ''}`}>
+
+                {/* Dark mode toggle option */}
                 <div
                   className="settings-option"
                   onClick={toggleDarkMode}
@@ -271,18 +368,24 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Main Content */}
+        {/* Main content area of the dashboard */}
         <div className="main-content">
+
+          {/* Header section with title and user info */}
           <div className="header">
             <h1>Gestão Agrícola Inteligente</h1>
+
+            {/* User profile display */}
             <div className="user-info">
               <img src={userImg} alt="User" />
               <span>{username}</span>
             </div>
           </div>
 
-          {/* Filters */}
+          {/* Filters section for selecting parameters like country, city, crop, and date */}
           <div className="filters">
+
+            {/* Country filter dropdown */}
             <div className="filter-group">
               <label htmlFor="country">País</label>
               <select
@@ -290,11 +393,14 @@ const Dashboard = () => {
                 value={location.country}
                 onChange={handleCountryChange}
               >
+                {/* Render each country as an option */}
                 {countries.map((c) => (
                   <option key={c.code} value={c.name}>{c.name}</option>
                 ))}
               </select>
             </div>
+
+            {/* City input field with autocomplete suggestions */}
             <div className="filter-group">
               <label htmlFor="city">Cidade</label>
               <input
@@ -304,6 +410,8 @@ const Dashboard = () => {
                 onChange={handleCityChange}
                 placeholder="Digite a cidade"
               />
+
+              {/* City suggestions dropdown list (only top 3) */}
               {citySuggestions.length > 0 && (
                 <ul className="city-suggestions">
                   {citySuggestions.slice(0, 3).map((suggestion, index) => (
@@ -314,6 +422,8 @@ const Dashboard = () => {
                 </ul>
               )}
             </div>
+
+            {/* Crop type dropdown selector */}
             <div className="filter-group">
               <label htmlFor="crop">Cultivo</label>
               <select
@@ -321,11 +431,14 @@ const Dashboard = () => {
                 value={location.crop}
                 onChange={handleCropChange}
               >
+                {/* Render crop options dynamically */}
                 {cropOptions.map(opt => (
                   <option key={opt.value} value={opt.value}>{opt.label}</option>
                 ))}
               </select>
             </div>
+
+            {/* Date input field */}
             <div className="filter-group">
               <label htmlFor="date">Data</label>
               <input
@@ -337,32 +450,40 @@ const Dashboard = () => {
             </div>
           </div>
 
-          {/* Dashboard Cards */}
+          {/* Dashboard weather information cards */}
           <WeatherCards />
 
-          {/* Suggestions */}
+          {/* Suggested actions or tips section */}
           <Suggestions />
 
-          {/* Charts */}
+          {/* Charts section */}
           <div className="charts">
+            {/* Temperature chart for the past 7 days */}
             <div className="chart-container">
               <div className="chart-title">Temperatura (Últimos 7 dias)</div>
               <TemperatureChart city={location.city} todayTemperature={weather?.temperature} />
             </div>
+
+            {/* Soil humidity chart for the past 7 days */}
             <div className="chart-container">
               <div className="chart-title">Humidade do Solo (Últimos 7 dias)</div>
               <HumidityChart />
             </div>
           </div>
 
-          {/* History */}
+          {/* History section */}
           <div className="history">
             <div className="history-header">
               <div className="history-title">Histórico de Ações</div>
+
+              {/* "View All" link for full history */}
               <div className="view-all">Ver Tudo</div>
             </div>
+
+            {/* Table displaying action history */}
             <HistoryTable />
           </div>
+
         </div>
       </div>
     </>

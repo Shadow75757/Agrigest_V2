@@ -4,7 +4,9 @@ import Dashboard from './components/Dashboard/Dashboard';
 import './App.css';
 
 function App() {
+  // State to control splash screen visibility
   const [showSplash, setShowSplash] = useState(true);
+  // State to control splash screen fade effect
   const [fade, setFade] = useState(false);
 
   useEffect(() => {
@@ -16,6 +18,7 @@ function App() {
     };
   }, []);
 
+  // Render the weather context, splash screen, and dashboard
   return (
     <WeatherProvider>
       {showSplash && <SplashScreen fade={fade} />}

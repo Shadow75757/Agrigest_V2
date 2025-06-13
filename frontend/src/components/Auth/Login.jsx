@@ -4,67 +4,73 @@ import { WeatherContext } from '../../context/WeatherContext';
 import './Login.css';
 import logo from '../images/agrigest_logo-noBG-text.png';
 
-const FADE_DURATION = 500; // ms
+const FADE_DURATION = 500; // Duration of fade animations in ms
 
+// Main Login component
 const Login = () => {
-  // Get the login function from context
+  // Get login function from global context
   const { login } = useContext(WeatherContext);
   const navigate = useNavigate();
 
-  // Base states
+  // Main states for form and UI control
   const [credentials, setCredentials] = useState({ username: '', password: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // Splash overlay states (initial load)
+  // States to control initial splash screen with fade animation
   const [showSplash, setShowSplash] = useState(true);
   const [splashFadeIn, setSplashFadeIn] = useState(false);
   const [splashFadeOut, setSplashFadeOut] = useState(false);
 
-  // Login overlay states (after login)
+  // States for loading overlay after login with fade animation
   const [showOverlay, setShowOverlay] = useState(false);
   const [fadeIn, setFadeIn] = useState(false);
 
-  // Splash screen effect on mount: fade in, then fade out, then hide
+  // Effect to control splash screen: fade in, wait, fade out and hide
   useEffect(() => {
-    setSplashFadeIn(true); // Start fade-in
-    const fadeOutTimer = setTimeout(() => setSplashFadeOut(true), 1000); // ms
-    const hideTimer = setTimeout(() => setShowSplash(false), 1000 + FADE_DURATION); // Add FADE_DURATION to garentee fade-out completes
+    setSplashFadeIn(true); // Start splash fade-in
+    const fadeOutTimer = setTimeout(() => setSplashFadeOut(true), 1000); // Start fade-out after 1s
+    const hideTimer = setTimeout(() => setShowSplash(false), 1000 + FADE_DURATION); // Hide splash after fade-out
     return () => {
       clearTimeout(fadeOutTimer);
       clearTimeout(hideTimer);
     };
   }, []);
 
-  // Show loading overlay and navigate after fade-in
-  // for context, we didn't get to make a fully working overlay effect, as a work arround, after a successful login,
-  // we show the fade in animation still on the login page
-  // once the website loads the dashboard it initiates the page with the fade out animation
-  // this way the transition is seamless ;)
+  /**
+   * Shows loading overlay with fade-in, then navigates to the given route.
+   * Creates a smooth transition between login screen and dashboard.
+   * @param {string} to - route to navigate to
+   */
   const showLoadingOverlayAndNavigate = (to) => {
-    setShowOverlay(true); // Show overlay
-    setFadeIn(false); // Reset fade-in
-    setTimeout(() => setFadeIn(true), 10); // Trigger fade-in quickly
+    setShowOverlay(true);    // Show overlay
+    setFadeIn(false);        // Reset fade-in to allow restart of animation
+    setTimeout(() => setFadeIn(true), 10); // Trigger fade-in almost instantly
     setTimeout(() => {
-      navigate(to, { state: { showOverlay: true } }); // Navigate after fade-in
-    }, FADE_DURATION); // Wait for fade-in to finish
+      navigate(to, { state: { showOverlay: true } }); // Navigate after animation
+    }, FADE_DURATION);
   };
 
-  // Handle login form submit
+  /**
+   * Handles form submission for login.
+   * Attempts login via context, on success stores user data and navigates.
+   * @param {Event} e - form submit event
+   */
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    const success = await login(credentials); // Try login with credentials
+    const success = await login(credentials);
     setLoading(false);
+
     if (!success) {
-      setError('Credenciais inválidas'); // Show error if login fails
+      setError('Invalid credentials'); // Show error if login fails
     } else {
       setError('');
-      // Guess gender based on username ending (for avatar)
+      // Set gender by username ending (simple heuristic for avatar)
       const gender = credentials.username.toLowerCase().endsWith('a') ? 'female' : 'male';
-      // Pick a random avatar number
+      // Random number for avatar selection
       const randomNum = Math.floor(Math.random() * 99) + 1;
-      // Store user info in localStorage
+      // Save user info to localStorage for later use
       localStorage.setItem('username', credentials.username);
       localStorage.setItem('gender', gender);
       localStorage.setItem('userImgNum', randomNum);
@@ -73,52 +79,59 @@ const Login = () => {
     }
   };
 
-  // Handle guest login button
+  /**
+   * Logs in as guest without password.
+   * Also saves user info and navigates.
+   */
   const handleGuestLogin = async () => {
     setLoading(true);
-    const success = await login({ username: 'guest', password: '' }); // Login as guest
+    const success = await login({ username: 'guest', password: '' });
     setLoading(false);
+
     if (!success) {
-      setError('Não foi possível logar como convidado'); // Show error if fails
+      setError('Unable to login as guest');
     } else {
       setError('');
-      // Store guest info in localStorage
       localStorage.setItem('username', 'guest');
       localStorage.setItem('gender', 'none');
       localStorage.setItem('userImgNum', 'guest');
-      // Show overlay and navigate to dashboard
       showLoadingOverlayAndNavigate('/dashboard');
     }
   };
 
-  // Handle input changes for username/password
+  /**
+   * Updates input fields and clears error if any.
+   * @param {string} field - "username" or "password"
+   * @returns {Function} event handler for input change
+   */
   const handleChange = (field) => (e) => {
     setCredentials({ ...credentials, [field]: e.target.value });
-    if (error) setError(''); // Clear error on change
+    if (error) setError('');
   };
 
   return (
     <>
-      {/* Splash overlay on initial load */}
+      {/* Initial splash overlay with fade animation */}
       {showSplash && (
         <div className={`loading-overlay${splashFadeIn ? ' fade-in' : ''}${splashFadeOut ? ' fade-out' : ''}`}>
           <img src={logo} alt="Logo" className="loading-logo" />
         </div>
       )}
-      {/* Loading overlay after login/guest login */}
+      {/* Loading overlay shown after login, also with fade */}
       {showOverlay && (
         <div className={`loading-overlay${fadeIn ? ' fade-in' : ''}`}>
           <img src={logo} alt="Logo" className="loading-logo" />
         </div>
       )}
-      {/* Login form (always rendered) */}
+
+      {/* Main login form */}
       <div className={`login-container${showSplash ? ' splash-active' : ''}`}>
         <form onSubmit={handleSubmit} className="login-form">
           <h2>Login</h2>
-          {/* Show error message if present */}
           {error && <div className="error-message">{error}</div>}
+
           <div className="form-group">
-            <label htmlFor="username">Utilizador:</label>
+            <label htmlFor="username">Username:</label>
             <input
               id="username"
               type="text"
@@ -127,6 +140,7 @@ const Login = () => {
               required
             />
           </div>
+
           <div className="form-group">
             <label htmlFor="password">Password:</label>
             <input
@@ -137,18 +151,18 @@ const Login = () => {
               required
             />
           </div>
-          {/* Login button */}
+
           <button type="submit" className="login-button" disabled={loading}>
-            {loading ? 'A entrar...' : 'Entrar'}
+            {loading ? 'Logging in...' : 'Login'}
           </button>
-          {/* Guest login button */}
+
           <button
             onClick={handleGuestLogin}
             className="guest-button"
             disabled={loading}
             style={{ marginTop: '10px' }}
           >
-            Entrar como guest
+            Login as Guest
           </button>
         </form>
       </div>

@@ -1,6 +1,23 @@
 import React, { createContext, useState, useEffect } from 'react';
 import { saveToLocalStorage, loadFromLocalStorage } from '../services/storageService';
 
+
+/**
+ * This WeatherProvider component is like a smart container for all weather-related stuff.
+ * 
+ * It keeps track of:
+ * - `weather`: the current weather info, starting by checking if we've saved any before in the browser.
+ * - `suggestions`: helpful farming tips based on the weather and the crop you care about.
+ * - `history`: a list of past weather checks or searches you've made, also saved from before if any.
+ * - `loading`: a flag that tells us when we're waiting for new weather data to come in.
+ * - `user`: info about the logged-in user, starts empty because no one is logged in yet.
+ * - `socket`: a connection for real-time updates (like if the weather changes suddenly).
+ * - `location`: what place and crop we're focused on, starting with Porto, Portugal, and growing vines.
+ * 
+ * Basically, this component holds all the important weather and farming data in one place, 
+ * keeps it updated, and makes it easy to share with any part of the app that needs it.
+ */
+
 export const WeatherContext = createContext();
 
 export const WeatherProvider = ({ children }) => {
@@ -15,6 +32,15 @@ export const WeatherProvider = ({ children }) => {
     city: 'Porto',
     crop: 'vine'
   });
+
+  /**
+ * Effect hook that triggers whenever location.city changes.
+ * Fetches weather data from backend API for the selected city,
+ * updates weather state, saves data locally,
+ * emits a socket event to subscribe to updates,
+ * generates farming suggestions based on crop and weather,
+ * and handles loading states and errors.
+ */
 
   useEffect(() => {
     const loadData = async () => {
@@ -56,6 +82,26 @@ export const WeatherProvider = ({ children }) => {
     if (!weatherData) return [];
 
     const suggestions = [];
+
+
+    /**
+ * Generates agricultural suggestions based on weather data and crop type.
+ *
+ * This block checks important weather conditions like precipitation,
+ * humidity, temperature, and wind speed to provide practical
+ * recommendations for irrigation management, disease prevention,
+ * frost risk, protection against strong winds, and optimal harvest conditions.
+ *
+ * It also includes crop-specific rules (vine, olive, corn, tomato, rice, wheat, etc.),
+ * giving tailored advice on risks and care for each plant type.
+ *
+ * The goal is to turn raw weather data into actionable, useful tips for farmers,
+ * assigning each suggestion a priority level (high, medium, low) to aid decision-making.
+ *
+ * In short: based on current weather and the crop, this code builds a list of suggestions
+ * to help manage farming efficiently and reduce risks.
+ */
+
 
     // Irrigação
     if (typeof weatherData.precipitation === 'number') {
@@ -745,11 +791,24 @@ export const WeatherProvider = ({ children }) => {
     return suggestions;
   };
 
-
+  /**
+   * Updates the current location state by merging new location data.
+   *
+   * @param {Object} newLocation - Partial location data to update (e.g., country, city, crop).
+   */
   const updateLocation = (newLocation) => {
     setLocation(prev => ({ ...prev, ...newLocation }));
   };
 
+  /**
+   * Performs user login by sending credentials to the backend API.
+   *
+   * Sends a POST request with the provided credentials,
+   * then sets the user state if login is successful.
+   *
+   * @param {Object} credentials - The user's login credentials (e.g., username and password).
+   * @returns {Promise<boolean>} - Returns true if login succeeds, otherwise false.
+   */
   const login = async (credentials) => {
     try {
       const response = await fetch('http://localhost:5000/api/login', {
@@ -760,20 +819,30 @@ export const WeatherProvider = ({ children }) => {
 
       const data = await response.json();
       if (response.ok) {
-        setUser(data.user);
+        setUser(data.user);  // Save logged-in user data to state
         return true;
       }
-      return false;
+      return false;  // Login failed (wrong credentials, etc)
     } catch (error) {
-      console.error("Login error:", error);
+      console.error("Login error:", error);  // Log any network or unexpected errors
       return false;
     }
   };
 
+  /**
+   * Logs out the current user by clearing the user state.
+   */
   const logout = () => {
     setUser(null);
   };
 
+  /**
+   * The main context provider component for weather and user data.
+   *
+   * It provides state and functions related to weather info, suggestions,
+   * user authentication, location data, and loading state,
+   * making them accessible to child components via context.
+   */
   return (
     <WeatherContext.Provider
       value={{
@@ -791,4 +860,4 @@ export const WeatherProvider = ({ children }) => {
       {children}
     </WeatherContext.Provider>
   );
-};
+}

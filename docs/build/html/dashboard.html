@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Dashboard.jsx &#8212; Agrigest  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=27fed22d" />
+    <script src="_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Filters.jsx" href="filters.html" />
+    <link rel="prev" title="App.jsx" href="appjsx.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="dashboard-jsx">
+<h1>Dashboard.jsx<a class="headerlink" href="#dashboard-jsx" title="Link to this heading">¶</a></h1>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">Dashboard</span></code> component is the main user interface for the Agrigest application. It integrates weather information, user profile display, geolocation-based city detection, dark mode, country/city/crop selection, and data visualization (weather cards, suggestions, charts, and history).</p>
+<p>This component relies heavily on context (<cite>WeatherContext</cite>) and browser/localStorage APIs to manage user settings and geolocation data.</p>
+</section>
+<section id="main-functionalities">
+<h2>Main Functionalities<a class="headerlink" href="#main-functionalities" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>Display and update weather, humidity, and temperature data.</p></li>
+<li><p>Fetch and allow selection of country, city, and crop.</p></li>
+<li><p>Display user profile image (custom or default).</p></li>
+<li><p>Geolocation-based automatic city detection.</p></li>
+<li><p>Dark mode toggle with persistent storage in localStorage.</p></li>
+<li><p>Display historical weather data using charts and tables.</p></li>
+</ul>
+</section>
+<section id="state-variables">
+<h2>State Variables<a class="headerlink" href="#state-variables" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">showOverlay</span></code>: Boolean – Controls whether to display the initial overlay (e.g. intro screen).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fadeOut</span></code>: Boolean – Manages fade-out transition animation of overlay.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">settingsOpen</span></code>: Boolean – Controls whether the settings dropdown is open.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">darkMode</span></code>: Boolean – Toggles dark mode appearance.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">countries</span></code>: Array – Stores list of countries fetched from API.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">citySuggestions</span></code>: Array – Holds suggested cities from user input.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">suggestionDebounce</span></code>: Ref – Timeout ref to throttle API calls for suggestions.</p></li>
+</ul>
+</section>
+<section id="context-usage">
+<h2>Context Usage<a class="headerlink" href="#context-usage" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">WeatherContext</span></code> provides:
+- <code class="docutils literal notranslate"><span class="pre">location</span></code>: Object – Holds current location, country, city, date, and crop.
+- <code class="docutils literal notranslate"><span class="pre">updateLocation</span></code>: Function – Updates location fields in the context.
+- <code class="docutils literal notranslate"><span class="pre">weather</span></code>: Object – Contains the fetched weather data.</p></li>
+</ul>
+</section>
+<section id="effects">
+<h2>Effects<a class="headerlink" href="#effects" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>Toggle dark mode (adds/removes <cite>.dark-mode</cite> class on <code class="docutils literal notranslate"><span class="pre">&lt;body&gt;</span></code>).</p></li>
+<li><p>Fetch list of countries from <cite>restcountries.com</cite> on mount.</p></li>
+<li><p>Auto-detect user city via Geolocation and OpenStreetMap Nominatim.</p></li>
+<li><p>Overlay fade-out timing (500ms delay before hiding).</p></li>
+</ul>
+</section>
+<section id="event-handlers">
+<h2>Event Handlers<a class="headerlink" href="#event-handlers" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">toggleDarkMode()</span></code>: Toggles between dark and light UI themes.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">handleCityChange(e)</span></code>: Updates city in location and triggers suggestion API call.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">handleCountryChange(e)</span></code>: Sets selected country and clears city.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">handleCropChange(e)</span></code>: Sets selected crop in location.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">handleDateChange(e)</span></code>: Sets selected date in location.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">handleSuggestionClick(suggestion)</span></code>: Selects a suggested city.</p></li>
+</ul>
+</section>
+<section id="apis-used">
+<h2>APIs Used<a class="headerlink" href="#apis-used" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p><cite>restcountries.com</cite>: For retrieving countries and their codes.</p></li>
+<li><p><cite>Nominatim (OpenStreetMap)</cite>: For reverse geolocation (lat/lon to city).</p></li>
+<li><p><cite>GeoDB Cities</cite>: For city autocomplete suggestions.</p></li>
+</ul>
+</section>
+<section id="assets">
+<h2>Assets<a class="headerlink" href="#assets" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">agrigest_logo-noBG-text.png</span></code>: Logo.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">default-user-icon.png</span></code>: Placeholder icon for guests.</p></li>
+</ul>
+</section>
+<section id="components-used">
+<h2>Components Used<a class="headerlink" href="#components-used" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">WeatherCards</span></code>: Displays weather conditions.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Suggestions</span></code>: Shows city suggestions.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">TemperatureChart</span></code> and <code class="docutils literal notranslate"><span class="pre">HumidityChart</span></code>: Displays charts for weather data.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">HistoryTable</span></code>: Displays a table of historical data.</p></li>
+</ul>
+</section>
+<section id="crop-options">
+<h2>Crop Options<a class="headerlink" href="#crop-options" title="Link to this heading">¶</a></h2>
+<p>A large predefined list of common crop types in Portuguese (e.g., Videira, Tomate, Trigo), sorted alphabetically.</p>
+</section>
+<section id="user-info">
+<h2>User Info<a class="headerlink" href="#user-info" title="Link to this heading">¶</a></h2>
+<p>Retrieved from <code class="docutils literal notranslate"><span class="pre">localStorage</span></code>:
+- <code class="docutils literal notranslate"><span class="pre">username</span></code>: Fallback to ‘Utilizador’
+- <code class="docutils literal notranslate"><span class="pre">gender</span></code>: male/female (used to determine profile image)
+- <code class="docutils literal notranslate"><span class="pre">userImgNum</span></code>: Used with <cite>randomuser.me</cite> to generate unique avatar images</p>
+</section>
+<section id="styling">
+<h2>Styling<a class="headerlink" href="#styling" title="Link to this heading">¶</a></h2>
+<p>CSS files imported:
+- <code class="docutils literal notranslate"><span class="pre">Login.css</span></code>
+- <code class="docutils literal notranslate"><span class="pre">Dashboard.css</span></code></p>
+</section>
+<section id="third-party-libraries">
+<h2>Third-Party Libraries<a class="headerlink" href="#third-party-libraries" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">axios</span></code>: Used for HTTP requests.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Modal</span></code> (from <cite>react-modal</cite>): Used for modal rendering.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">react-router-dom</span></code>: <cite>useLocation</cite> for route state.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">WeatherContext</span></code>: Provides location and weather context.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">randomuser.me</span></code>: For profile image avatars.</p></li>
+</ul>
+</section>
+<section id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Link to this heading">¶</a></h2>
+<p>This component is typically used as the landing dashboard after user login. It assumes the presence of context, proper route setup, and required assets and child components.</p>
+<p><code class="docutils literal notranslate"><span class="pre">Dashboard</span></code> does not accept props and is fully context-driven.</p>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Agrigest</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="app.html">App</a></li>
+<li class="toctree-l1"><a class="reference internal" href="appjs.html">App.js</a></li>
+<li class="toctree-l1"><a class="reference internal" href="appjsx.html">App.jsx</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Dashboard.jsx</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main-functionalities">Main Functionalities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#state-variables">State Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#context-usage">Context Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#effects">Effects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#event-handlers">Event Handlers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#apis-used">APIs Used</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#assets">Assets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#components-used">Components Used</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#crop-options">Crop Options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#user-info">User Info</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#styling">Styling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#third-party-libraries">Third-Party Libraries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#usage">Usage</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="filters.html">Filters.jsx</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historyTable.html">HistoryTable.jsx</a></li>
+<li class="toctree-l1"><a class="reference internal" href="humidityChart.html">humidity_chart.jsx</a></li>
+<li class="toctree-l1"><a class="reference internal" href="login.html">Login Component</a></li>
+<li class="toctree-l1"><a class="reference internal" href="openweathermap_api.html">OpenWeatherMap API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sidebar.html">Sidebar.jsx</a></li>
+<li class="toctree-l1"><a class="reference internal" href="storageService.html">StorageService.js</a></li>
+<li class="toctree-l1"><a class="reference internal" href="storageServiceTest.html">StorageService.test.js</a></li>
+<li class="toctree-l1"><a class="reference internal" href="suggestionService.html">SuggestionsService.js</a></li>
+<li class="toctree-l1"><a class="reference internal" href="suggestions.html">Suggestions Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="test_app.html">Testes da App</a></li>
+<li class="toctree-l1"><a class="reference internal" href="weatherCards.html">WeatherCards.jsx</a></li>
+<li class="toctree-l1"><a class="reference internal" href="weatherContext.html">WeatherContext</a></li>
+<li class="toctree-l1"><a class="reference internal" href="weatherContextTest.html">WeatherContext.test.js</a></li>
+<li class="toctree-l1"><a class="reference internal" href="weatherService.html">WeatherService.js</a></li>
+<li class="toctree-l1"><a class="reference internal" href="temperatureChart.html">temperature_chart.jsx</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="appjsx.html" title="previous chapter">App.jsx</a></li>
+      <li>Next: <a href="filters.html" title="next chapter">Filters.jsx</a></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Prata/Luis/Sergio.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="_sources/dashboard.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
