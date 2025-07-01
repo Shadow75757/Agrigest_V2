@@ -13,4 +13,19 @@ export default defineConfig({
       '@': '/src',
     },
   },
+
+  // Forward API + WebSocket requests to Flask server
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://192.168.1.198:5000',
+        changeOrigin: true,
+      },
+      '/socket.io': {
+        target: 'http://192.168.1.198:5000',
+        ws: true,
+        changeOrigin: true,
+      },
+    },
+  },
 });

@@ -139,7 +139,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchCountries = async () => {
       try {
-        const response = await axios.get('https://restcountries.com/v3.1/all');
+        const response = await axios.get('http://192.168.1.198:5173/api/countries');
         const sortedCountries = response.data
           .map(c => ({
             name: c.translations?.por?.common || c.name.common,

@@ -42,34 +42,54 @@ export const WeatherProvider = ({ children }) => {
  * and handles loading states and errors.
  */
 
-  useEffect(() => {
+useEffect(() => {
+  const handler = setTimeout(() => {
     const loadData = async () => {
       setLoading(true);
-      try {
-        // Buscar dados da API
-        const response = await fetch(`http://localhost:5000/api/weather/${location.city}`);
-        const weatherData = await response.json();
 
-        if (socket) {
-          socket.emit('subscribe_weather', { city: location.city });
+      const urlsToTry = [
+        `http://192.168.1.198:5000/api/weather/${location.city}`,
+        `http://192.168.1.198:5173/api/weather/${location.city}`,
+      ];
+
+      let weatherData = null;
+
+      for (const url of urlsToTry) {
+        try {
+          const response = await fetch(url);
+          if (!response.ok) continue;
+          weatherData = await response.json();
+
+          if (socket) {
+            socket.emit('subscribe_weather', { city: location.city });
+          }
+
+          break;
+        } catch (error) {
+          console.warn(`Fetch failed at ${url}:`, error);
         }
+      }
 
+      if (weatherData) {
         setWeather(weatherData);
         saveToLocalStorage('weather', weatherData);
-
-        // Gerar sugestões (agora no frontend)
         const farmingSuggestions = generateSuggestions(location.crop, weatherData);
         setSuggestions(farmingSuggestions);
-
-        setLoading(false);
-      } catch (error) {
-        console.error("Error loading data:", error);
-        setLoading(false);
+      } else {
+        console.error("Failed to load weather data from all endpoints.");
+        setWeather(null);
+        setSuggestions([]);
       }
+
+      setLoading(false);
     };
 
     loadData();
-  }, [location.city]);
+  }, 300); // espera 300ms após digitação
+
+  return () => clearTimeout(handler); // limpa timeout se o usuário digitar novamente
+}, [location.city]);
+
 
   useEffect(() => {
     if (weather) {
@@ -809,9 +829,9 @@ export const WeatherProvider = ({ children }) => {
    * @param {Object} credentials - The user's login credentials (e.g., username and password).
    * @returns {Promise<boolean>} - Returns true if login succeeds, otherwise false.
    */
-  const login = async (credentials) => {
+ const login = async (credentials) => {
     try {
-      const response = await fetch('http://localhost:5000/api/login', {
+      const response = await fetch('http://192.168.1.198:5173/api/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(credentials)

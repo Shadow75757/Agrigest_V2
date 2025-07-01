@@ -5,6 +5,7 @@ from flask_socketio import SocketIO
 import openweathermap_api as weather_api
 import json
 import os
+import requests
 from datetime import datetime
 
 # Set up Flask app and enable CORS for all routes
@@ -213,6 +214,12 @@ def get_weather(city):
 
 # Define API endpoint to get weather forecast for a city
 
+# workarround for CORS issues with countries API
+@app.route('/api/countries')
+def get_countries():
+    response = requests.get('https://restcountries.com/v3.1/all')
+    return jsonify(response.json())
+
 
 @app.route('/api/forecast/<city>', methods=['GET'])
 def get_forecast(city):
@@ -351,4 +358,4 @@ if __name__ == '__main__':
 
     :return: None
     """
-    socketio.run(app, debug=True)
+    socketio.run(app, host='0.0.0.0', port=5173, debug=True)
